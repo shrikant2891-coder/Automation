@@ -252,12 +252,18 @@ NextRet:
     Next r
 
     net = Nz(DictGet(debtor, "postpaid"))
-    If net < 0 Then AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", 0, -net, narr _
-    Else: AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", net, 0, narr
+    If net < 0 Then
+        AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", 0, -net, narr
+    Else
+        AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", net, 0, narr
+    End If
 
     net = Nz(DictGet(debtor, "prepaid"))
-    If net < 0 Then AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", 0, -net, narr _
-    Else: AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", net, 0, narr
+    If net < 0 Then
+        AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", 0, -net, narr
+    Else
+        AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", net, 0, narr
+    End If
 
     DumpAggDebitAbs wsUp, voucherNo, retAgg, "Sales", narr
     DumpAggCredit wsUp, voucherNo, discAgg, "Sales", narr
@@ -297,7 +303,11 @@ Private Sub BuildShipping(wsUp As Worksheet, wsEx As Worksheet, lastEx As Long, 
         AccTax tmpTax, stax, ship, stFrom, stTo
         For Each k In tmpTax.Keys
             amt = CDbl(tmpTax(k))
-            If amt >= 0 Then Acc taxCr, CStr(k), amt Else Acc taxDr, CStr(k), Abs(amt)
+            If amt >= 0 Then
+                Acc taxCr, CStr(k), amt
+            Else
+                Acc taxDr, CStr(k), Abs(amt)
+            End If
         Next k
 NextShip:
     Next r
@@ -376,7 +386,13 @@ Private Sub BuildPriceDrop(wsUp As Worksheet, wsEx As Worksheet, lastEx As Long,
         stTo = CStr(wsEx.Cells(r, COL_ST_TO).Value & "")
         pd = Nz(wsEx.Cells(r, COL_PD).Value)
         pdt = Nz(wsEx.Cells(r, COL_PD_TAX).Value)
-        If revGL.Exists(cat) Then gl = revGL(cat) ElseIf revGL.Exists("Mobile") Then gl = revGL("Mobile") Else gl = 401121
+        If revGL.Exists(cat) Then
+            gl = revGL(cat)
+        ElseIf revGL.Exists("Mobile") Then
+            gl = revGL("Mobile")
+        Else
+            gl = 401121
+        End If
         Acc debtor, sc, pd + pdt
         Acc revAgg, CStr(gl) & "|" & AliasState(stFrom), pd
         AccTax taxAgg, pdt, pd, stFrom, stTo
@@ -385,13 +401,19 @@ NextPD:
 
     net = Nz(DictGet(debtor, "postpaid"))
     If Abs(net) > 0.005 Then
-        If net < 0 Then AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", 0, -net, narr _
-        Else: AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", net, 0, narr
+        If net < 0 Then
+            AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", 0, -net, narr
+        Else
+            AddLine wsUp, voucherNo, GL_POSTPAID, "IN-OTH", "Sales", net, 0, narr
+        End If
     End If
     net = Nz(DictGet(debtor, "prepaid"))
     If Abs(net) > 0.005 Then
-        If net < 0 Then AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", 0, -net, narr _
-        Else: AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", net, 0, narr
+        If net < 0 Then
+            AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", 0, -net, narr
+        Else
+            AddLine wsUp, voucherNo, GL_PREPAID, "IN-OTH", "Sales", net, 0, narr
+        End If
     End If
     DumpAggDebitAbs wsUp, voucherNo, revAgg, "Sales", narr
     DumpAggDebitAbs wsUp, voucherNo, taxAgg, "Sales", narr
@@ -418,13 +440,20 @@ Private Sub BuildBuyerFee(wsUp As Worksheet, wsEx As Worksheet, lastEx As Long, 
         fee = Nz(wsEx.Cells(r, COL_BUYER).Value)
         tax = Nz(wsEx.Cells(r, COL_BUYER_TAX).Value)
         Acc debtor, sc, fee + tax
-        If fee >= 0 Then Acc revCr, CStr(REV_GL) & "|" & AliasState(stFrom), fee _
-        Else: Acc revDr, CStr(REV_GL) & "|" & AliasState(stFrom), Abs(fee)
+        If fee >= 0 Then
+            Acc revCr, CStr(REV_GL) & "|" & AliasState(stFrom), fee
+        Else
+            Acc revDr, CStr(REV_GL) & "|" & AliasState(stFrom), Abs(fee)
+        End If
         Set tmpTax = CreateObject("Scripting.Dictionary")
         AccTax tmpTax, tax, fee, stFrom, stTo
         For Each k In tmpTax.Keys
             amt = CDbl(tmpTax(k))
-            If amt >= 0 Then Acc taxCr, CStr(k), amt Else Acc taxDr, CStr(k), Abs(amt)
+            If amt >= 0 Then
+                Acc taxCr, CStr(k), amt
+            Else
+                Acc taxDr, CStr(k), Abs(amt)
+            End If
         Next k
 NextBF:
     Next r
