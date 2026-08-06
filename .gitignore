@@ -1,0 +1,7 @@
+samples/*.xlsx
+!samples/sample_report.xlsm
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+out/
