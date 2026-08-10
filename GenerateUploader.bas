@@ -43,10 +43,14 @@ Private Const COL_BUYER As Long = 27
 Private Const COL_BUYER_TAX As Long = 28
 Private Const COL_BUMP As Long = 29
 Private Const COL_BUMP_TAX As Long = 30
+Private Const COL_INVOICE_COUNT As Long = 31
 
 Private Const GL_POSTPAID As Long = 131144
 Private Const GL_PREPAID As Long = 131102
 Private Const GL_PBO_DEBTOR As Long = 131126
+Private Const GL_DSS_EXPENSE As Long = 625184
+Private Const GL_DSS_CREDITOR As Long = 210210
+Private Const DSS_ASP_RATE As Double = 0.385
 
 Private gSl As Long
 Private gDate As Date
@@ -112,6 +116,8 @@ Public Sub GenerateUploader()
         "Being Secure Packaging revenue booked for the month " & gMonthLabel
     BuildPrexoBumpup wsUp, wsEx, lastEx, 17, _
         "Being PREXO BUMPUP Revenue booked for the month of " & gMonthLabel
+    BuildDssAsp wsUp, wsEx, lastEx, 18, _
+        "Provision made for DSS ASP charges for the Month of " & gMonthLabel
 
     WriteControl wsUp, wsCtrl
     WriteUnmapped wsUn, unmapped
@@ -496,6 +502,19 @@ NextBU:
     DumpAggCredit wsUp, voucherNo, taxAgg, "Sales", narr
 End Sub
 
+Private Sub BuildDssAsp(wsUp As Worksheet, wsEx As Worksheet, lastEx As Long, _
+                        voucherNo As Long, narr As String)
+    Dim r As Long, invoiceTotal As Double, amount As Double
+    invoiceTotal = 0#
+    For r = 2 To lastEx
+        invoiceTotal = invoiceTotal + Nz(wsEx.Cells(r, COL_INVOICE_COUNT).Value)
+    Next r
+    amount = Round(invoiceTotal * DSS_ASP_RATE, 2)
+    If amount < 0.005 Then Exit Sub
+    AddProvisionLine wsUp, voucherNo, GL_DSS_EXPENSE, "IN-DL", "Purchase", amount, 0#, narr
+    AddProvisionLine wsUp, voucherNo, GL_DSS_CREDITOR, "IN-OTH", "Purchase", 0#, amount, narr
+End Sub
+
 
 '===== Tax helpers =============================================================
 
@@ -651,6 +670,33 @@ Private Sub AddLine(wsUp As Worksheet, voucherNo As Long, account As Variant, _
     wsUp.Cells(rr, 14).Value = gInvType
     wsUp.Cells(rr, 15).Value = gCompany
     wsUp.Cells(rr, 16).Value = "No"
+End Sub
+
+Private Sub AddProvisionLine(wsUp As Worksheet, voucherNo As Long, account As Variant, _
+                             state As String, fn As String, debit As Double, credit As Double, narr As String)
+    Dim rr As Long
+    debit = Round(debit, 2)
+    credit = Round(credit, 2)
+    If Abs(debit) < 0.005 And Abs(credit) < 0.005 Then Exit Sub
+    If debit < 0 And credit = 0 Then credit = -debit: debit = 0
+    If credit < 0 And debit = 0 Then debit = -credit: credit = 0
+
+    gSl = gSl + 1
+    rr = gSl + 1
+    wsUp.Cells(rr, 1).Value = "AR-Provision"
+    wsUp.Cells(rr, 2).Value = account
+    wsUp.Cells(rr, 3).Value = gDate
+    wsUp.Cells(rr, 6).Value = voucherNo
+    wsUp.Cells(rr, 7).Value = state
+    wsUp.Cells(rr, 8).Value = fn
+    wsUp.Cells(rr, 9).Value = gLocation
+    wsUp.Cells(rr, 10).Value = debit
+    wsUp.Cells(rr, 11).Value = credit
+    wsUp.Cells(rr, 12).Value = narr
+    wsUp.Cells(rr, 13).Value = gSl
+    wsUp.Cells(rr, 14).Value = "B2B"
+    wsUp.Cells(rr, 15).Value = gCompany
+    wsUp.Cells(rr, 16).Value = "Yes"
 End Sub
 
 Private Sub WriteControl(wsUp As Worksheet, wsCtrl As Worksheet)

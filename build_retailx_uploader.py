@@ -36,6 +36,9 @@ STATE_ALIAS = {"IN-GJ": "IN-GR", "IN-OR": "IN-OS"}
 DEBTOR_POSTPAID = 131144
 DEBTOR_PREPAID = 131102
 DEBTOR_PBO = 131126
+DSS_ASP_EXPENSE_GL = 625184
+DSS_ASP_CREDITOR_GL = 210210
+DSS_ASP_RATE = 0.385
 
 IGST_GL = {5: 225001, 12: 225002, 18: 225003, 28: 225004}
 CGST_GL = {5: 225006, 12: 225007, 18: 225008, 28: 225009}
@@ -91,6 +94,14 @@ DEFAULT_VOUCHERS = [
         "report_names": ["PREXO_BUMPUP"],
         "narration": "Being PREXO BUMPUP Revenue booked for the month of {month}",
         "function": "Sales",
+    },
+    {
+        "voucher_no": 18,
+        "key": "DSS_ASP",
+        "report_names": [],
+        "always_run": True,
+        "narration": "Provision made for DSS ASP charges for the Month of {month}",
+        "function": "Purchase",
     },
 ]
 
@@ -340,6 +351,8 @@ class UploaderBuilder:
         credit,
         narration,
         voucher_type="AR-JV Sale",
+        invoice_type=None,
+        provision_reverse="No",
     ):
         debit, credit = r2(debit), r2(credit)
         if abs(debit) < 0.005 and abs(credit) < 0.005:
@@ -365,9 +378,9 @@ class UploaderBuilder:
                 "Credit Amount": r2(credit),
                 "Narration": narration,
                 "Sl no": self.sl,
-                "Invoice  Type": self.invoice_type,
+                "Invoice  Type": invoice_type or self.invoice_type,
                 "Company Code": self.company_code,
-                "Is provision reverse": "No",
+                "Is provision reverse": provision_reverse,
             }
         )
 
@@ -706,6 +719,39 @@ def gen_prexo_bumpup(b: UploaderBuilder, rows, maps, voucher_no, date, narration
               debit=0, credit=v, narration=narration)
 
 
+def gen_dss_asp(b: UploaderBuilder, rows, maps, voucher_no, date, narration, function):
+    invoice_total = sum(amt_any(row, "Invoice count", "Invoicecount") for row in rows)
+    amount = r2(invoice_total * DSS_ASP_RATE)
+    if amount < 0.005:
+        return
+    b.add(
+        voucher_no=voucher_no,
+        account=DSS_ASP_EXPENSE_GL,
+        date=date,
+        state="IN-DL",
+        function=function,
+        debit=amount,
+        credit=0,
+        narration=narration,
+        voucher_type="AR-Provision",
+        invoice_type="B2B",
+        provision_reverse="Yes",
+    )
+    b.add(
+        voucher_no=voucher_no,
+        account=DSS_ASP_CREDITOR_GL,
+        date=date,
+        state="IN-OTH",
+        function=function,
+        debit=0,
+        credit=amount,
+        narration=narration,
+        voucher_type="AR-Provision",
+        invoice_type="B2B",
+        provision_reverse="Yes",
+    )
+
+
 GENERATORS = {
     "SALES": gen_sales,
     "SALES_RETURN": gen_sales_return,
@@ -714,6 +760,7 @@ GENERATORS = {
     "PRICE_DROP": gen_price_drop,
     "BUYER_FEE": gen_buyer_fee,
     "PREXO_BUMPUP": gen_prexo_bumpup,
+    "DSS_ASP": gen_dss_asp,
 }
 
 
@@ -831,6 +878,7 @@ def write_instructions(ws):
         ("15  Price Drop         ← PRICE_DROP", False),
         ("16  Secure Packaging   ← BUYER_FEE (Buyer Fee + Buyer Tax)", False),
         ("17  PREXO BUMPUP       ← PREXO_BUMPUP", False),
+        ("18  DSS ASP provision  ← SUM(Invoice count) × 0.385", False),
         ("", False),
         ("GL lookup rules", True),
         ("Sales revenue GL      = GL Master where Classification='Sales' and Rec blank, Product=analytics_category", False),
@@ -968,7 +1016,7 @@ def build(input_path: Path, output_path: Path):
 
     for spec in vouchers:
         # Skip voucher if none of its reports exist in extract
-        if not any(r in present_reports for r in spec["report_names"]):
+        if not spec.get("always_run") and not any(r in present_reports for r in spec["report_names"]):
             print(f"  skip voucher {spec['voucher_no']} ({spec['key']}) — reports not in {extract_sheet}")
             continue
         narr = spec["narration"].format(month=month_label)
