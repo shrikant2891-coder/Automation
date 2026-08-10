@@ -17,6 +17,10 @@ or in Excel: `Alt+F11` → run macro **`GenerateUploader`**.
 
 5. Review `Control` (debit = credit per voucher) and `Unmapped` (missing GL mappings).
 
+## Voucher 18 — DSS ASP provision
+
+`SUM(Extract2[Invoice count]) × 0.385` → AR-Provision voucher (Dr 625184 / Cr 210210).
+
 ## Files
 
 - `RetailX.xlsm` — working workbook with embedded VBA macro
