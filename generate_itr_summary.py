@@ -45,6 +45,9 @@ ACCOUNTS = [
     },
 ]
 
+YES_ACCOUNT = "014091900000507"
+SCB_ACCOUNT = "54410610545"
+YES_IFSC = "YESB0000140"
 HEADER_FILL = PatternFill("solid", fgColor="1F4E79")
 HEADER_FONT = Font(bold=True, color="FFFFFF", size=11)
 SUBHEADER_FILL = PatternFill("solid", fgColor="D9E2F3")
@@ -261,17 +264,124 @@ def is_cash_deposit(txn: dict) -> bool:
     )
 
 
-def is_self_transfer(txn: dict) -> bool:
+def is_contra_entry(txn: dict) -> bool:
+    """Inter-account transfers between YES Bank and Standard Chartered."""
     desc = txn["description"].upper()
-    own_accounts = ("014091900000507", "54410610545", "8882283917")
-    return any(token in desc for token in own_accounts) and (
-        "SELF" in desc or "FUNDS TRF" in desc or "PAID VIA CRED" in desc or "8882283917" in desc
-    )
+    raw = txn["description"]
+    bank = txn["bank"]
+
+    if bank == "YES Bank":
+        if "STANDARD CHARTERED" in desc:
+            return True
+        if re.search(r"X{3,4}0545|54410610545", desc):
+            return True
+
+    if bank == "Standard Chartered Bank":
+        if YES_ACCOUNT in raw:
+            if any(
+                marker in desc
+                for marker in (
+                    "ARUN SHANKAR AWASTHI",
+                    "ARUNSHANKARAWASTHI",
+                    "PAID VIA CRED",
+                    "SELF TRANSFER",
+                )
+            ):
+                return True
+            if YES_IFSC in desc and "8882283917" in raw:
+                return True
+            if "IMPS" in desc and "YES BANK" in desc:
+                return True
+
+    return False
+
+
+def get_contra_direction(txn: dict) -> tuple[str, str, str]:
+    """Return (direction label, from bank, to bank)."""
+    if txn["bank"] == "YES Bank":
+        if txn["deposit"] > 0:
+            return "SCB → YES Bank", "Standard Chartered Bank", "YES Bank"
+        return "YES Bank → SCB", "YES Bank", "Standard Chartered Bank"
+
+    if txn["withdrawal"] > 0:
+        return "SCB → YES Bank", "Standard Chartered Bank", "YES Bank"
+    return "YES Bank → SCB", "YES Bank", "Standard Chartered Bank"
+
+
+def contra_amount_by_direction(contra_txns: list[dict]) -> tuple[float, float]:
+    scb_to_yes = 0.0
+    yes_to_scb = 0.0
+    for txn in contra_txns:
+        amount = txn["deposit"] or txn["withdrawal"]
+        direction, _, _ = get_contra_direction(txn)
+        if direction == "SCB → YES Bank":
+            scb_to_yes += amount
+        else:
+            yes_to_scb += amount
+    return scb_to_yes, yes_to_scb
+
+
+def match_contra_pairs(contra_txns: list[dict]) -> list[dict]:
+    """Match likely contra pairs by amount within a short date window."""
+    outgoings = []
+    incomings = []
+    for txn in contra_txns:
+        direction, from_bank, to_bank = get_contra_direction(txn)
+        amount = txn["deposit"] or txn["withdrawal"]
+        entry = {**txn, "direction": direction, "from_bank": from_bank, "to_bank": to_bank, "amount": amount}
+        if txn["bank"] == from_bank and txn["withdrawal"] > 0:
+            outgoings.append(entry)
+        elif txn["bank"] == to_bank and txn["deposit"] > 0:
+            incomings.append(entry)
+
+    pairs = []
+    used_out: set[int] = set()
+    used_in: set[int] = set()
+    pair_no = 1
+
+    for o_idx, outgoing in enumerate(outgoings):
+        if o_idx in used_out or not outgoing["txn_date"]:
+            continue
+        for i_idx, incoming in enumerate(incomings):
+            if i_idx in used_in or not incoming["txn_date"]:
+                continue
+            if outgoing["direction"] != incoming["direction"]:
+                continue
+            if abs(outgoing["amount"] - incoming["amount"]) > 0.01:
+                continue
+            day_gap = abs((outgoing["txn_date"] - incoming["txn_date"]).days)
+            if day_gap > 5:
+                continue
+            pairs.append(
+                {
+                    "pair_no": pair_no,
+                    "amount": outgoing["amount"],
+                    "direction": outgoing["direction"],
+                    "debit_date": outgoing["txn_date"],
+                    "debit_bank": outgoing["bank"],
+                    "debit_ref": outgoing["ref_no"],
+                    "credit_date": incoming["txn_date"],
+                    "credit_bank": incoming["bank"],
+                    "credit_ref": incoming["ref_no"],
+                    "day_gap": day_gap,
+                }
+            )
+            used_out.add(o_idx)
+            used_in.add(i_idx)
+            pair_no += 1
+            break
+
+    return pairs
+
+
+def is_self_transfer(txn: dict) -> bool:
+    return is_contra_entry(txn)
 
 
 def classify_income(txn: dict) -> str:
-    if is_self_transfer(txn):
-        return "Self Transfer (Own Account)"
+    if is_contra_entry(txn):
+        direction, _, _ = get_contra_direction(txn)
+        return f"Contra Entry ({direction})"
     if is_infutive_salary(txn):
         return "Salary - Infutive Technology"
     if is_interest_income(txn):
@@ -344,6 +454,8 @@ def create_itr_summary_sheet(wb: Workbook, transactions: list[dict]) -> None:
 
     yes_txns = [t for t in transactions if t["bank"] == "YES Bank"]
     scb_txns = [t for t in transactions if t["bank"] == "Standard Chartered Bank"]
+    contra_txns = [t for t in transactions if is_contra_entry(t)]
+    scb_to_yes, yes_to_scb = contra_amount_by_direction(contra_txns)
 
     row = 1
     ws.cell(row=row, column=1, value="ITR Filing Summary - Combined Bank Statement Analysis").font = TITLE_FONT
@@ -382,6 +494,12 @@ def create_itr_summary_sheet(wb: Workbook, transactions: list[dict]) -> None:
     row += 1
     income_rows = [
         ["Income Head", "Amount (INR)", "No. of Entries", "ITR Schedule / Notes"],
+        [
+            "Contra Entries (Inter-bank transfers)",
+            scb_to_yes + yes_to_scb,
+            len(contra_txns),
+            "Not taxable - See 'Contra Entries' sheet",
+        ],
         [
             "Salary from Infutive Technology Pvt Ltd (Combined)",
             sum(t["deposit"] for t in salary_txns),
@@ -432,7 +550,7 @@ def create_itr_summary_sheet(wb: Workbook, transactions: list[dict]) -> None:
         "1. This workbook combines YES Bank (Excel) and Standard Chartered (PDF) statements for FY 2025-26.",
         "2. Infutive Technology salary credits are identified from both accounts using SALARY / PAY ARUN markers.",
         "3. Refunds, reversals, and credit-card payments from Infutive are excluded from salary.",
-        "4. Transfers between own accounts (YES Bank and SCB) are flagged as self-transfers, not income.",
+        "4. Contra entries (YES Bank ↔ SCB transfers) are separated and excluded from taxable income.",
         "5. Combined savings bank interest is eligible for deduction u/s 80TTA (up to Rs.10,000).",
         "6. Verify total salary against Form 16 / salary slips before filing ITR.",
         "7. Large non-salary credits and cash deposits should be reconciled with source of funds.",
@@ -596,6 +714,110 @@ def create_cash_deposits_sheet(wb: Workbook, transactions: list[dict]) -> None:
     autosize_columns(ws)
 
 
+def create_contra_entries_sheet(wb: Workbook, transactions: list[dict]) -> None:
+    ws = wb.create_sheet("Contra Entries")
+    contra_txns = sorted(
+        [t for t in transactions if is_contra_entry(t)],
+        key=lambda t: t["txn_date"] or datetime.min,
+    )
+    pairs = match_contra_pairs(contra_txns)
+    scb_to_yes, yes_to_scb = contra_amount_by_direction(contra_txns)
+
+    row = 1
+    ws.cell(row=row, column=1, value="Contra Entries - Inter-Bank Transfers (Own Accounts)").font = TITLE_FONT
+    row += 1
+    ws.cell(
+        row=row,
+        column=1,
+        value="Transfers between YES Bank (014091900000507) and Standard Chartered (54410610545) - not taxable income",
+    )
+    row += 2
+
+    summary_rows = [
+        ["Summary", "Amount (INR)", "Count", "Notes"],
+        ["SCB → YES Bank (money moved to YES Bank)", scb_to_yes, sum(1 for t in contra_txns if get_contra_direction(t)[0] == "SCB → YES Bank"), "Debit in SCB or Credit in YES"],
+        ["YES Bank → SCB (money moved to SCB)", yes_to_scb, sum(1 for t in contra_txns if get_contra_direction(t)[0] == "YES Bank → SCB"), "Debit in YES or Credit in SCB"],
+        ["Total Contra Volume", scb_to_yes + yes_to_scb, len(contra_txns), "Both directions combined"],
+        ["Matched Pairs Identified", sum(p["amount"] for p in pairs), len(pairs), "Same amount within 5 days"],
+    ]
+    row = write_table(ws, row, summary_rows[0], summary_rows[1:], money_cols={2}) + 2
+
+    ws.cell(row=row, column=1, value="All Contra Entries").font = TITLE_FONT
+    row += 1
+    headers = [
+        "S.No.",
+        "Direction",
+        "From Bank",
+        "To Bank",
+        "Transaction Date",
+        "Value Date",
+        "Type",
+        "Amount (INR)",
+        "Bank (Entry Side)",
+        "Account No.",
+        "Reference No.",
+        "Description",
+    ]
+    data = []
+    for idx, txn in enumerate(contra_txns, 1):
+        direction, from_bank, to_bank = get_contra_direction(txn)
+        amount = txn["deposit"] or txn["withdrawal"]
+        txn_type = "Credit" if txn["deposit"] > 0 else "Debit"
+        data.append(
+            [
+                idx,
+                direction,
+                from_bank,
+                to_bank,
+                txn["txn_date"],
+                txn["value_date"],
+                txn_type,
+                amount,
+                txn["bank"],
+                txn["account_no"],
+                txn["ref_no"],
+                txn["description"],
+            ]
+        )
+
+    row = write_table(ws, row, headers, data, money_cols={8}, date_cols={5, 6}) + 2
+
+    ws.cell(row=row, column=1, value="Matched Contra Pairs (Same Amount, Within 5 Days)").font = TITLE_FONT
+    row += 1
+    pair_headers = [
+        "Pair No.",
+        "Direction",
+        "Amount (INR)",
+        "Debit Date",
+        "Debit Bank",
+        "Debit Ref",
+        "Credit Date",
+        "Credit Bank",
+        "Credit Ref",
+        "Day Gap",
+    ]
+    pair_rows = [
+        [
+            pair["pair_no"],
+            pair["direction"],
+            pair["amount"],
+            pair["debit_date"],
+            pair["debit_bank"],
+            pair["debit_ref"],
+            pair["credit_date"],
+            pair["credit_bank"],
+            pair["credit_ref"],
+            pair["day_gap"],
+        ]
+        for pair in pairs
+    ]
+    if not pair_rows:
+        pair_rows = [["", "", "", "", "", "", "", "", "", "No auto-matched pairs found"]]
+
+    write_table(ws, row, pair_headers, pair_rows, money_cols={3}, date_cols={4, 7})
+    autosize_columns(ws)
+
+
 def create_monthly_summary_sheet(wb: Workbook, transactions: list[dict]) -> None:
     ws = wb.create_sheet("Monthly Summary")
     monthly: dict[tuple[str, str], dict] = defaultdict(
@@ -702,6 +924,7 @@ def main() -> None:
     wb = Workbook()
     create_itr_summary_sheet(wb, transactions)
     create_infutive_salary_sheet(wb, transactions)
+    create_contra_entries_sheet(wb, transactions)
     create_interest_sheet(wb, transactions)
     create_cash_deposits_sheet(wb, transactions)
     create_monthly_summary_sheet(wb, transactions)
@@ -711,10 +934,12 @@ def main() -> None:
     wb.save(OUTPUT_PATH)
 
     salary_txns = [t for t in transactions if is_infutive_salary(t)]
+    contra_txns = [t for t in transactions if is_contra_entry(t)]
     print(f"Created: {OUTPUT_PATH}")
     print(f"YES Bank transactions: {len([t for t in transactions if t['bank'] == 'YES Bank'])}")
     print(f"SCB transactions: {len([t for t in transactions if t['bank'] == 'Standard Chartered Bank'])}")
     print(f"Combined transactions: {len(transactions)}")
+    print(f"Contra entries: {len(contra_txns)}")
     print(f"Infutive salary entries: {len(salary_txns)}")
     print(f"Total salary amount: {sum(t['deposit'] for t in salary_txns):,.2f}")
     print(f"YES Bank salary: {sum(t['deposit'] for t in salary_txns if t['bank'] == 'YES Bank'):,.2f}")
