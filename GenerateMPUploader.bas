@@ -3,6 +3,7 @@ Option Explicit
 
 '===============================================================================
 ' MP Summary - Dynamic Uploader Generator (VBA)
+' Uses native VBA Collections only (no Scripting.Dictionary / ActiveX).
 ' Run: Alt+F8 -> GenerateMPUploader
 '===============================================================================
 
@@ -22,11 +23,12 @@ Private gCompany As String
 Private gInvType As String
 Private gLocation As String
 Private gFuncName As String
+Private gLastCol As Long
 
 Public Sub GenerateMPUploader()
     Dim wsSum As Worksheet, wsGL As Worksheet, wsUp As Worksheet
     Dim wsCtrl As Worksheet
-    Dim glMap As Object, headers As Object
+    Dim glMap As Collection
     Dim lastSum As Long, lastGL As Long
 
     On Error GoTo Fail
@@ -47,12 +49,11 @@ Public Sub GenerateMPUploader()
 
     lastSum = wsSum.Cells(wsSum.Rows.Count, 1).End(xlUp).Row
     lastGL = wsGL.Cells(wsGL.Rows.Count, 1).End(xlUp).Row
+    gLastCol = wsSum.Cells(1, wsSum.Columns.Count).End(xlToLeft).Column
     If lastSum < 2 Then Err.Raise vbObjectError + 1, , "Summary has no data"
 
-    Set glMap = CreateObject("Scripting.Dictionary")
-    Set headers = CreateObject("Scripting.Dictionary")
+    Set glMap = New Collection
     LoadGLMap wsGL, lastGL, glMap
-    LoadHeaders wsSum, headers
 
     gMonth = DetectMonth(wsSum, lastSum)
     gPriorMonth = PriorMonthLabel(gMonth)
@@ -61,34 +62,34 @@ Public Sub GenerateMPUploader()
     ClearData wsUp
     ClearData wsCtrl
     WriteUploaderHeader wsUp
-    wsCtrl.Range("A1:E1").Value = Array("Voucher No", "Narration", "Debit", "Credit", "Difference")
+    WriteControlHeader wsCtrl
 
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 28, gMonth, OI_FILE, "prepaid", False, "AR-Journal", "prepaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 28, gMonth, OI_FILE, "prepaid", False, "AR-Journal", "prepaid", _
         "MP_Charges_OI closing-Prepaid for the month of " & gMonth, "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 29, gMonth, OI_FILE, "postpaid", False, "AR-Journal", "postpaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 29, gMonth, OI_FILE, "postpaid", False, "AR-Journal", "postpaid", _
         "MP_Charges_OI closing-Postpaid for the month of " & gMonth, "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 30, gMonth, CREDITOR_FILE, "postpaid", False, "AR-Journal", "postpaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 30, gMonth, CREDITOR_FILE, "postpaid", False, "AR-Journal", "postpaid", _
         "MP Charges creditor for the month of " & gMonth & " - Postpaid", "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 31, gMonth, CREDITOR_FILE, "prepaid", False, "AR-Journal", "prepaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 31, gMonth, CREDITOR_FILE, "prepaid", False, "AR-Journal", "prepaid", _
         "MP Charges creditor for the month of " & gMonth & " - Prepaid", "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 32, gPriorMonth, OI_FILE, "prepaid", True, "AR-Journal", "prepaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 32, gPriorMonth, OI_FILE, "prepaid", True, "AR-Journal", "prepaid", _
         "MP_Charges_OI opening-Prepaid for the month of " & gMonth, "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 33, gPriorMonth, OI_FILE, "postpaid", True, "AR-Journal", "postpaid", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 33, gPriorMonth, OI_FILE, "postpaid", True, "AR-Journal", "postpaid", _
         "MP_Charges_OI opening-postpaid for the month of " & gMonth, "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 34, gMonth, "Provision", "Provision", False, "AR-Provision", "provision", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 34, gMonth, "Provision", "Provision", False, "AR-Provision", "provision", _
         "MP charges Provision - subsequent return & undelivered for the month of " & gMonth, "Yes"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 35, gMonth, "VD", "VD", False, "AR-Journal", "vd", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 35, gMonth, "VD", "VD", False, "AR-Journal", "vd", _
         "MP  charges volume discount for the month of " & gMonth, "No"
-    BuildExpenseVoucher wsSum, lastSum, headers, glMap, wsUp, 36, gMonth, "PBO VD", "VD", False, "AR-Journal", "vd", _
+    BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 36, gMonth, "PBO VD", "VD", False, "AR-Journal", "vd", _
         "MP charges volume discount on PBO adjustment for the month  of " & gMonth, "No"
 
-    BuildTcsTdsVoucher wsSum, lastSum, headers, glMap, wsUp, 41, gMonth, "postpaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 41, gMonth, "postpaid", "tcs", _
         "TCS GST Receivable ( Postpaid) For the month of " & gMonth
-    BuildTcsTdsVoucher wsSum, lastSum, headers, glMap, wsUp, 42, gMonth, "postpaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 42, gMonth, "postpaid", "tds", _
         "TDS Receivable ( Postpaid) For the month of " & gMonth
-    BuildTcsTdsVoucher wsSum, lastSum, headers, glMap, wsUp, 43, gMonth, "prepaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 43, gMonth, "prepaid", "tcs", _
         "TCS GST Receivable ( Prepaid) For the month of " & gMonth
-    BuildTcsTdsVoucher wsSum, lastSum, headers, glMap, wsUp, 44, gMonth, "prepaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 44, gMonth, "prepaid", "tds", _
         "TDS Receivable ( Prepaid) For the month of " & gMonth
 
     WriteControl wsUp, wsCtrl
@@ -107,24 +108,68 @@ Fail:
     MsgBox "GenerateMPUploader failed (" & Err.Number & "): " & Err.Description, vbCritical, "MP Summary"
 End Sub
 
+'===== Collection helpers (no ActiveX) =========================================
+
+Private Function ColExists(c As Collection, ByVal k As String) As Boolean
+    On Error Resume Next
+    Dim tmp As Variant
+    tmp = c.Item(k)
+    ColExists = (Err.Number = 0)
+    Err.Clear
+    On Error GoTo 0
+End Function
+
+Private Function ColGetDbl(c As Collection, ByVal k As String) As Double
+    On Error GoTo Miss
+    ColGetDbl = CDbl(c(k))
+    Exit Function
+Miss:
+    ColGetDbl = 0
+End Function
+
+Private Sub ColSetDbl(c As Collection, ByVal k As String, ByVal v As Double)
+    On Error Resume Next
+    c.Remove k
+    On Error GoTo 0
+    c.Add v, k
+End Sub
+
+Private Sub ColAddDbl(c As Collection, ByVal k As String, ByVal v As Double)
+    If ColExists(c, k) Then
+        ColSetDbl c, k, ColGetDbl(c, k) + v
+    Else
+        c.Add v, k
+    End If
+End Sub
+
+Private Function ColGetVar(c As Collection, ByVal k As String) As Variant
+    On Error GoTo Miss
+    ColGetVar = c(k)
+    Exit Function
+Miss:
+    ColGetVar = Empty
+End Function
+
+Private Sub ColSetVar(c As Collection, ByVal k As String, ByVal v As Variant)
+    On Error Resume Next
+    c.Remove k
+    On Error GoTo 0
+    c.Add v, k
+End Sub
+
 '===== Loaders ================================================================
 
-Private Sub LoadGLMap(ws As Worksheet, lastRow As Long, glMap As Object)
+Private Sub LoadGLMap(ws As Worksheet, lastRow As Long, glMap As Collection)
     Dim r As Long, field As String
     For r = 2 To lastRow
         field = NormHeader(CStr(ws.Cells(r, 1).Value))
-        If Len(field) > 0 Then glMap(field) = ws.Cells(r, 2).Value
+        If Len(field) > 0 Then ColSetVar glMap, field, ws.Cells(r, 2).Value
     Next r
 End Sub
 
-Private Sub LoadHeaders(ws As Worksheet, headers As Object)
-    Dim c As Long, h As String, lastCol As Long
-    lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
-    For c = 1 To lastCol
-        h = NormHeader(CStr(ws.Cells(1, c).Value))
-        If Len(h) > 0 Then headers(CStr(c)) = h
-    Next c
-End Sub
+Private Function HeaderAt(ws As Worksheet, ByVal colIdx As Long) As String
+    HeaderAt = NormHeader(CStr(ws.Cells(1, colIdx).Value))
+End Function
 
 Private Function DetectMonth(ws As Worksheet, lastRow As Long) As String
     Dim r As Long, m As String, best As String
@@ -182,7 +227,7 @@ Private Function NormalizeState(ByVal st As Variant) As String
     End If
 End Function
 
-Private Function GLForColumn(glMap As Object, ByVal header As String, ByVal state As String) As Variant
+Private Function GLForColumn(glMap As Collection, ByVal header As String, ByVal state As String) As Variant
     Dim h As String
     h = NormHeader(header)
     If LCase$(h) = COL_IGST Then
@@ -193,23 +238,15 @@ Private Function GLForColumn(glMap As Object, ByVal header As String, ByVal stat
         End If
         Exit Function
     End If
-    If glMap.Exists(h) Then
-        GLForColumn = glMap(h)
-    Else
-        GLForColumn = Empty
-    End If
+    GLForColumn = ColGetVar(glMap, h)
 End Function
 
-Private Function DebtorGL(glMap As Object, ByVal scope As String) As Variant
+Private Function DebtorGL(glMap As Collection, ByVal scope As String) As Variant
     Select Case LCase$(scope)
-        Case "prepaid"
-            If glMap.Exists("Prepaid Debtor") Then DebtorGL = glMap("Prepaid Debtor")
-        Case "postpaid"
-            If glMap.Exists("Postpaid Debtor") Then DebtorGL = glMap("Postpaid Debtor")
-        Case "provision"
-            If glMap.Exists("Provision Ledger") Then DebtorGL = glMap("Provision Ledger")
-        Case "vd"
-            If glMap.Exists("VD Debtor") Then DebtorGL = glMap("VD Debtor")
+        Case "prepaid": DebtorGL = ColGetVar(glMap, "Prepaid Debtor")
+        Case "postpaid": DebtorGL = ColGetVar(glMap, "Postpaid Debtor")
+        Case "provision": DebtorGL = ColGetVar(glMap, "Provision Ledger")
+        Case "vd": DebtorGL = ColGetVar(glMap, "VD Debtor")
     End Select
 End Function
 
@@ -264,57 +301,62 @@ End Sub
 
 '===== Voucher builders =========================================================
 
-Private Sub BuildExpenseVoucher(ws As Worksheet, lastRow As Long, headers As Object, glMap As Object, _
+Private Sub BuildExpenseVoucher(ws As Worksheet, lastRow As Long, glMap As Collection, _
     wsUp As Worksheet, ByVal vNo As Long, ByVal monthLbl As String, ByVal filename As String, _
     ByVal orderType As String, ByVal reverse As Boolean, ByVal vType As String, ByVal debtorScope As String, _
     ByVal narration As String, ByVal provRev As String)
 
-    Dim agg As Object, key As Variant, parts() As String
-    Dim r As Long, c As Variant, h As String, st As String, amt As Double, gl As Variant
-    Dim totalDr As Double, totalCr As Double, dr As Double, cr As Double
+    Dim agg As Collection, aggKeys As Collection
+    Dim i As Long, parts() As String
+    Dim r As Long, colIdx As Long, h As String, st As String, amt As Double, gl As Variant
+    Dim key As String, totalDr As Double, totalCr As Double, dr As Double, cr As Double
     Dim dGL As Variant, diff As Double
 
     gVNo = vNo
-    Set agg = CreateObject("Scripting.Dictionary")
+    Set agg = New Collection
+    Set aggKeys = New Collection
+
     For r = 2 To lastRow
         If Not RowMatches(ws, r, monthLbl, orderType, filename) Then GoTo NextR
         st = NormalizeState(ws.Cells(r, 4).Value)
         If Len(st) = 0 Then GoTo NextR
-        For Each c In headers.Keys
-            h = headers(c)
+        For colIdx = 1 To gLastCol
+            h = HeaderAt(ws, colIdx)
             If IsExpenseCol(h) Or IsGstCol(h) Then
-                amt = NzDbl(ws.Cells(r, CLng(c)).Value)
+                amt = NzDbl(ws.Cells(r, colIdx).Value)
                 If Abs(amt) >= 0.005 Then
                     gl = GLForColumn(glMap, h, st)
                     If Not IsValidGL(gl) Then GoTo NextCol
                     key = st & "|" & h
-                    If agg.Exists(key) Then
-                        agg(key) = CDbl(agg(key)) + amt
+                    If ColExists(agg, key) Then
+                        ColSetDbl agg, key, ColGetDbl(agg, key) + amt
                     Else
-                        agg(key) = amt
+                        agg.Add amt, key
+                        aggKeys.Add key
                     End If
                 End If
             End If
 NextCol:
-        Next c
+        Next colIdx
 NextR:
     Next r
 
-    If agg.Count = 0 Then Exit Sub
+    If aggKeys.Count = 0 Then Exit Sub
 
     totalDr = 0: totalCr = 0
-    For Each key In agg.Keys
-        parts = Split(CStr(key), "|")
+    For i = 1 To aggKeys.Count
+        key = CStr(aggKeys(i))
+        parts = Split(key, "|")
         st = parts(0)
         h = parts(1)
         gl = GLForColumn(glMap, h, st)
         If Not IsValidGL(gl) Then GoTo NextKey
-        SignToDrCr CDbl(agg(key)), reverse, dr, cr
+        SignToDrCr ColGetDbl(agg, key), reverse, dr, cr
         AddLine wsUp, vType, CLng(gl), gDate, st, dr, cr, narration, provRev
         totalDr = totalDr + dr
         totalCr = totalCr + cr
 NextKey:
-    Next key
+    Next i
 
     dGL = DebtorGL(glMap, debtorScope)
     If Not IsValidGL(dGL) Then Exit Sub
@@ -326,60 +368,65 @@ NextKey:
     End If
 End Sub
 
-Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, headers As Object, glMap As Object, _
+Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Collection, _
     wsUp As Worksheet, ByVal vNo As Long, ByVal monthLbl As String, ByVal orderType As String, _
     ByVal mode As String, ByVal narration As String)
 
-    Dim agg As Object, key As Variant, parts() As String
-    Dim r As Long, c As Variant, h As String, st As String, amt As Double, gl As Variant
-    Dim totalDr As Double, totalCr As Double, dr As Double, cr As Double
+    Dim agg As Collection, aggKeys As Collection
+    Dim i As Long, parts() As String
+    Dim r As Long, colIdx As Long, h As String, st As String, amt As Double, gl As Variant
+    Dim key As String, totalDr As Double, totalCr As Double, dr As Double, cr As Double
     Dim dGL As Variant, diff As Double, useCol As Boolean
 
     gVNo = vNo
-    Set agg = CreateObject("Scripting.Dictionary")
+    Set agg = New Collection
+    Set aggKeys = New Collection
+
     For r = 2 To lastRow
         If Trim$(CStr(ws.Cells(r, 1).Value)) <> monthLbl Then GoTo NextR2
         If Trim$(CStr(ws.Cells(r, 3).Value)) <> orderType Then GoTo NextR2
         st = NormalizeState(ws.Cells(r, 5).Value)
         If Len(st) = 0 Then GoTo NextR2
-        For Each c In headers.Keys
-            h = headers(c)
+        For colIdx = 1 To gLastCol
+            h = HeaderAt(ws, colIdx)
             useCol = False
             If mode = "tcs" Then useCol = IsTcsCol(h)
             If mode = "tds" Then useCol = IsTdsCol(h)
             If useCol Then
-                amt = NzDbl(ws.Cells(r, CLng(c)).Value)
+                amt = NzDbl(ws.Cells(r, colIdx).Value)
                 If Abs(amt) >= 0.005 Then
                     gl = GLForColumn(glMap, h, st)
                     If Not IsValidGL(gl) Then GoTo NextCol2
                     key = st & "|" & h
-                    If agg.Exists(key) Then
-                        agg(key) = CDbl(agg(key)) + amt
+                    If ColExists(agg, key) Then
+                        ColSetDbl agg, key, ColGetDbl(agg, key) + amt
                     Else
-                        agg(key) = amt
+                        agg.Add amt, key
+                        aggKeys.Add key
                     End If
                 End If
             End If
 NextCol2:
-        Next c
+        Next colIdx
 NextR2:
     Next r
 
-    If agg.Count = 0 Then Exit Sub
+    If aggKeys.Count = 0 Then Exit Sub
 
     totalDr = 0: totalCr = 0
-    For Each key In agg.Keys
-        parts = Split(CStr(key), "|")
+    For i = 1 To aggKeys.Count
+        key = CStr(aggKeys(i))
+        parts = Split(key, "|")
         st = parts(0)
         h = parts(1)
         gl = GLForColumn(glMap, h, st)
         If Not IsValidGL(gl) Then GoTo NextKey2
-        SignToDrCr CDbl(agg(key)), False, dr, cr
+        SignToDrCr ColGetDbl(agg, key), False, dr, cr
         AddLine wsUp, "AR-Journal", CLng(gl), gDate, st, dr, cr, narration, "No"
         totalDr = totalDr + dr
         totalCr = totalCr + cr
 NextKey2:
-    Next key
+    Next i
 
     dGL = DebtorGL(glMap, orderType)
     If Not IsValidGL(dGL) Then Exit Sub
@@ -441,42 +488,48 @@ Private Sub WriteUploaderHeader(ws As Worksheet)
     ws.Cells(1, 16).Value = "Is provision reverse"
 End Sub
 
+Private Sub WriteControlHeader(ws As Worksheet)
+    ws.Cells(1, 1).Value = "Voucher No"
+    ws.Cells(1, 2).Value = "Narration"
+    ws.Cells(1, 3).Value = "Debit"
+    ws.Cells(1, 4).Value = "Credit"
+    ws.Cells(1, 5).Value = "Difference"
+End Sub
+
 Private Sub WriteControl(wsUp As Worksheet, wsCtrl As Worksheet)
     Dim last As Long, r As Long, v As Variant
-    Dim d As Object, c As Object, n As Object
-    Dim key As Variant, rr As Long, diff As Double
-    Set d = CreateObject("Scripting.Dictionary")
-    Set c = CreateObject("Scripting.Dictionary")
-    Set n = CreateObject("Scripting.Dictionary")
+    Dim d As Collection, c As Collection, n As Collection, vKeys As Collection
+    Dim i As Long, rr As Long, diff As Double, k As String
+    Set d = New Collection
+    Set c = New Collection
+    Set n = New Collection
+    Set vKeys = New Collection
 
     last = wsUp.Cells(wsUp.Rows.Count, 1).End(xlUp).Row
     For r = 2 To last
         v = wsUp.Cells(r, 6).Value
         If IsEmpty(v) Or v = 0 Then GoTo NextR3
-        Acc d, CStr(v), NzDbl(wsUp.Cells(r, 10).Value)
-        Acc c, CStr(v), NzDbl(wsUp.Cells(r, 11).Value)
-        If Not n.Exists(CStr(v)) Then n.Add CStr(v), wsUp.Cells(r, 12).Value
+        k = CStr(v)
+        ColAddDbl d, k, NzDbl(wsUp.Cells(r, 10).Value)
+        ColAddDbl c, k, NzDbl(wsUp.Cells(r, 11).Value)
+        If Not ColExists(n, k) Then
+            ColSetVar n, k, wsUp.Cells(r, 12).Value
+            vKeys.Add k
+        End If
 NextR3:
     Next r
 
     rr = 2
-    For Each key In d.Keys
-        wsCtrl.Cells(rr, 1).Value = key
-        wsCtrl.Cells(rr, 2).Value = n(key)
-        wsCtrl.Cells(rr, 3).Value = Round(CDbl(d(key)), 2)
-        wsCtrl.Cells(rr, 4).Value = Round(CDbl(c(key)), 2)
-        diff = Round(CDbl(d(key)) - CDbl(c(key)), 2)
+    For i = 1 To vKeys.Count
+        k = CStr(vKeys(i))
+        wsCtrl.Cells(rr, 1).Value = k
+        wsCtrl.Cells(rr, 2).Value = ColGetVar(n, k)
+        wsCtrl.Cells(rr, 3).Value = Round(ColGetDbl(d, k), 2)
+        wsCtrl.Cells(rr, 4).Value = Round(ColGetDbl(c, k), 2)
+        diff = Round(ColGetDbl(d, k) - ColGetDbl(c, k), 2)
         wsCtrl.Cells(rr, 5).Value = diff
         rr = rr + 1
-    Next key
-End Sub
-
-Private Sub Acc(dict As Object, ByVal k As String, ByVal v As Double)
-    If dict.Exists(k) Then
-        dict(k) = CDbl(dict(k)) + v
-    Else
-        dict.Add k, v
-    End If
+    Next i
 End Sub
 
 Private Function NzDbl(v As Variant) As Double
