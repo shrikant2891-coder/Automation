@@ -18,11 +18,15 @@ Or with explicit paths:
 python3 build_mp_uploader.py --input "MP Summary.xlsx" --output "MP Summary.xlsx"
 ```
 
-### Excel macro (optional)
+### Excel macro (recommended)
 
-1. Open `MP Summary.xlsx` in Excel.
-2. `Alt+F11` → **File → Import File** → select `GenerateMPUploader.bas`.
-3. Run macro **GenerateMPUploader** (requires Python 3 on the machine).
+Download **`MP Summary.xlsm`** (macro-enabled). Open in Excel, enable macros, then run **`GenerateMPUploader`** from the macro list (`Alt+F8`).
+
+To rebuild the `.xlsm` locally:
+
+```bash
+python3 package_mp_xlsm.py
+```
 
 ### Voucher series
 
