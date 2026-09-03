@@ -80,14 +80,22 @@ Public Sub GenerateMPUploader()
     BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 36, gMonthLabel, "PBO VD", "VD", False, "AR-Journal", "vd", _
         "MP charges volume discount on PBO adjustment for the month  of " & gMonthLabel, "No"
 
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 41, gMonthLabel, "postpaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 41, gMonthLabel, "postpaid", "tcs", False, _
         "TCS GST Receivable ( Postpaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 42, gMonthLabel, "postpaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 42, gMonthLabel, "postpaid", "tds", False, _
         "TDS Receivable ( Postpaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 43, gMonthLabel, "prepaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 43, gMonthLabel, "prepaid", "tcs", False, _
         "TCS GST Receivable ( Prepaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 44, gMonthLabel, "prepaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 44, gMonthLabel, "prepaid", "tds", False, _
         "TDS Receivable ( Prepaid) For the month of " & gMonthLabel
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 45, gPriorMonth, "postpaid", "tcs", True, _
+        "TCS GST Payable ( Postpaid) For the month of " & gMonthLabel
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 46, gPriorMonth, "postpaid", "tds", True, _
+        "TDS Payable ( Postpaid) For the month of " & gMonthLabel
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 47, gPriorMonth, "prepaid", "tcs", True, _
+        "TCS GST Payable ( Prepaid) For the month of " & gMonthLabel
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 48, gPriorMonth, "prepaid", "tds", True, _
+        "TDS Payable ( Prepaid) For the month of " & gMonthLabel
 
     WriteControl wsUp, wsCtrl
 
@@ -206,7 +214,7 @@ NextR:
 End Sub
 
 Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Object, wsUp As Worksheet, _
-    voucherNo As Long, monthLbl As String, orderType As String, mode As String, narr As String)
+    voucherNo As Long, monthLbl As String, orderType As String, mode As String, reverse As Boolean, narr As String)
 
     Dim agg As Object
     Dim r As Long, colIdx As Long, h As String, st As String, amt As Double, gl As Variant
@@ -228,9 +236,7 @@ Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Object
             If useCol Then
                 amt = Nz(ws.Cells(r, colIdx).Value)
                 If Abs(amt) >= 0.005 Then
-                    gl = GLForColumn(glMap, h, st)
-                    If Not IsValidGL(gl) Then GoTo NextCol2
-                    key = CStr(gl) & "|" & st
+                    key = h & "|" & st
                     Acc agg, key, amt
                 End If
             End If
@@ -244,9 +250,11 @@ NextR2:
     totalDr = 0: totalCr = 0
     For Each key In agg.Keys
         parts = Split(CStr(key), "|")
-        gl = parts(0)
+        h = parts(0)
         st = parts(1)
-        SignToDrCr CDbl(agg(key)), False, dr, cr
+        gl = GLForColumn(glMap, h, st)
+        If Not IsValidGL(gl) Then GoTo NextKey2
+        SignToDrCr CDbl(agg(key)), reverse, dr, cr
         If dr > 0.005 Then
             AddLine wsUp, voucherNo, CLng(gl), st, FN_OTHERS, dr, 0, narr, "AR-Journal", "No"
             totalDr = totalDr + dr
@@ -255,6 +263,7 @@ NextR2:
             AddLine wsUp, voucherNo, CLng(gl), st, FN_OTHERS, 0, cr, narr, "AR-Journal", "No"
             totalCr = totalCr + cr
         End If
+NextKey2:
     Next key
 
     dGL = DebtorGL(glMap, orderType)

@@ -18,11 +18,22 @@ Or with explicit paths:
 python3 build_mp_uploader.py --input "MP Summary.xlsx" --output "MP Summary.xlsx"
 ```
 
-### Excel macro (recommended)
+### Excel macro (same approach as RetailX)
 
-Download **`MP Summary.xlsm`** (macro-enabled). Open in Excel, enable macros, then run **`GenerateMPUploader`** from the macro list (`Alt+F8`).
+The `.xlsm` uses the **same VBA shell as `RetailX.xlsm`** with `GenerateMPUploader` swapped in.
 
-To rebuild the `.xlsm` locally:
+1. Download **`MP Summary.xlsm`**
+2. Open in Excel → **Enable Content**
+3. `Alt+F8` → run **`GenerateMPUploader`**
+
+**Or import manually (same as RetailX):**
+
+1. Open `MP Summary.xlsx`
+2. `Alt+F11` → **File → Import File** → select `GenerateMPUploader.bas`
+3. Save as **`MP Summary.xlsm`** (macro-enabled workbook)
+4. Run **`GenerateMPUploader`**
+
+Rebuild the packaged file:
 
 ```bash
 python3 package_mp_xlsm.py
@@ -37,17 +48,20 @@ python3 package_mp_xlsm.py
 | 32–33 | OI opening reversal (Prepaid / Postpaid) | **Prior month** `MEC-FKMP-OPEN-INVOICE-FLOW.csv` |
 | 34 | Provision | `Provision` rows |
 | 35–36 | Volume discount | `VD` / `PBO VD` rows |
-| 41–44 | TCS / TDS receivable | All rows by prepaid / postpaid |
+| 41–44 | TCS / TDS receivable (current month) | All rows by prepaid / postpaid |
+| 45–48 | TCS / TDS payable (prior month) | Prior-month rows by prepaid / postpaid |
 
 ### Posting rules
 
 1. Expense and GST lines are posted at **state level** using `state_code_to`.
-2. TCS and TDS lines use **`tcs_state_code_to`** for state.
-3. GL codes are looked up from **GL Backup** using Summary column headers.
-4. **IGST input**: `IN-DL` → `142067`; all other states → `142013`.
-5. Debtor and provision ledgers always use **`IN-OTH`**.
-6. Prior-month OI report drives **OI opening** vouchers (expense reversal).
-7. **Negative** Summary values → Debit expense/GST input, Credit debtor.
+2. TCS and TDS lines use **`tcs_state_code_to`** for state and **net at state level** (per TCS/TDS column).
+3. **Current month** TCS/TDS: negative net → debit receivable; positive net → credit receivable.
+4. **Prior month** TCS/TDS: negative net → credit payable; positive net → debit payable.
+5. GL codes are looked up from **GL Backup** using Summary column headers.
+6. **IGST input**: `IN-DL` → `142067`; all other states → `142013`.
+7. Debtor and provision ledgers always use **`IN-OTH`**.
+8. Prior-month OI report drives **OI opening** vouchers (expense reversal).
+9. **Negative** Summary values → Debit expense/GST input, Credit debtor.
 
 After each run, check the **Control** sheet — every voucher should have `Difference = 0`.
 
