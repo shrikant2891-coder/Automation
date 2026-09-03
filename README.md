@@ -53,7 +53,7 @@ python3 package_mp_xlsm.py
 ### Posting rules
 
 1. Expense and GST lines are posted at **state level** using `state_code_to`.
-2. TCS and TDS lines use **`tcs_state_code_to`**, include **current + prior month** together, and **net at state level** (per TCS/TDS column).
+2. TCS and TDS lines use **`tcs_state_code_to`** (fallback **`state_code_to`** when NA), include the **latest two Summary months**, and **net at state level per GL**.
 3. TCS/TDS: negative net → debit receivable; positive net → credit receivable (same rule for both months).
 4. GL codes are looked up from **GL Backup** using Summary column headers.
 5. **IGST input**: `IN-DL` → `142067`; all other states → `142013`.

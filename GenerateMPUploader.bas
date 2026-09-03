@@ -51,6 +51,8 @@ Public Sub GenerateMPUploader()
 
     LoadConfig gMonthLabel, gDate, gCompany, gInvType
     gPriorMonth = PriorMonthLabel(gMonthLabel)
+    Dim tcsMonths As Object
+    Set tcsMonths = TcsTdsMonthSet(wsSum, lastSum, gMonthLabel, gPriorMonth)
 
     Set glMap = CreateObject("Scripting.Dictionary")
     LoadGLMap wsGL, lastGL, glMap
@@ -80,13 +82,13 @@ Public Sub GenerateMPUploader()
     BuildExpenseVoucher wsSum, lastSum, glMap, wsUp, 36, gMonthLabel, "PBO VD", "VD", False, "AR-Journal", "vd", _
         "MP charges volume discount on PBO adjustment for the month  of " & gMonthLabel, "No"
 
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 41, gMonthLabel, gPriorMonth, "postpaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 41, tcsMonths, "postpaid", "tcs", _
         "TCS GST Receivable ( Postpaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 42, gMonthLabel, gPriorMonth, "postpaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 42, tcsMonths, "postpaid", "tds", _
         "TDS Receivable ( Postpaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 43, gMonthLabel, gPriorMonth, "prepaid", "tcs", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 43, tcsMonths, "prepaid", "tcs", _
         "TCS GST Receivable ( Prepaid) For the month of " & gMonthLabel
-    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 44, gMonthLabel, gPriorMonth, "prepaid", "tds", _
+    BuildTcsTdsVoucher wsSum, lastSum, glMap, wsUp, 44, tcsMonths, "prepaid", "tds", _
         "TDS Receivable ( Prepaid) For the month of " & gMonthLabel
 
     WriteControl wsUp, wsCtrl
@@ -206,7 +208,7 @@ NextR:
 End Sub
 
 Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Object, wsUp As Worksheet, _
-    voucherNo As Long, monthLbl As String, priorLbl As String, orderType As String, mode As String, narr As String)
+    voucherNo As Long, allowedMonths As Object, orderType As String, mode As String, narr As String)
 
     Dim agg As Object
     Dim r As Long, colIdx As Long, h As String, st As String, amt As Double, gl As Variant
@@ -217,10 +219,10 @@ Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Object
     Set agg = CreateObject("Scripting.Dictionary")
 
     For r = 2 To lastRow
-        rowMonth = Trim$(CStr(ws.Cells(r, 1).Value & ""))
-        If rowMonth <> monthLbl And rowMonth <> priorLbl Then GoTo NextR2
+        rowMonth = MonthLabelFromCell(ws.Cells(r, 1).Value)
+        If Not allowedMonths.Exists(rowMonth) Then GoTo NextR2
         If Trim$(CStr(ws.Cells(r, 3).Value & "")) <> orderType Then GoTo NextR2
-        st = NormalizeState(CStr(ws.Cells(r, 5).Value & ""))
+        st = TcsTdsState(ws, r)
         If Len(st) = 0 Then GoTo NextR2
         For colIdx = 1 To gLastCol
             h = HeaderAt(ws, colIdx)
@@ -230,7 +232,9 @@ Private Sub BuildTcsTdsVoucher(ws As Worksheet, lastRow As Long, glMap As Object
             If useCol Then
                 amt = Nz(ws.Cells(r, colIdx).Value)
                 If Abs(amt) >= 0.005 Then
-                    key = h & "|" & st
+                    gl = GLForColumn(glMap, h, st)
+                    If Not IsValidGL(gl) Then GoTo NextCol2
+                    key = CStr(gl) & "|" & st
                     Acc agg, key, amt
                 End If
             End If
@@ -244,10 +248,8 @@ NextR2:
     totalDr = 0: totalCr = 0
     For Each key In agg.Keys
         parts = Split(CStr(key), "|")
-        h = parts(0)
+        gl = parts(0)
         st = parts(1)
-        gl = GLForColumn(glMap, h, st)
-        If Not IsValidGL(gl) Then GoTo NextKey2
         SignToDrCr CDbl(agg(key)), False, dr, cr
         If dr > 0.005 Then
             AddLine wsUp, voucherNo, CLng(gl), st, FN_OTHERS, dr, 0, narr, "AR-Journal", "No"
@@ -257,7 +259,6 @@ NextR2:
             AddLine wsUp, voucherNo, CLng(gl), st, FN_OTHERS, 0, cr, narr, "AR-Journal", "No"
             totalCr = totalCr + cr
         End If
-NextKey2:
     Next key
 
     dGL = DebtorGL(glMap, orderType)
@@ -410,6 +411,65 @@ Private Function IsValidGL(gl As Variant) As Boolean
     If UCase$(Trim$(CStr(gl))) = "NA" Then Exit Function
     If Not IsNumeric(gl) Then Exit Function
     IsValidGL = True
+End Function
+
+Private Function TcsTdsState(ws As Worksheet, ByVal r As Long) As String
+    Dim st As String
+    st = NormalizeState(CStr(ws.Cells(r, 5).Value & ""))
+    If Len(st) = 0 Then st = NormalizeState(CStr(ws.Cells(r, 4).Value & ""))
+    TcsTdsState = st
+End Function
+
+Private Function MonthLabelFromCell(ByVal v As Variant) As String
+    Dim s As String
+    If IsDate(v) Then
+        MonthLabelFromCell = Format$(CDate(v), "Mmm") & "'" & Right$(Format$(CDate(v), "yyyy"), 2)
+        Exit Function
+    End If
+    s = Trim$(CStr(v & ""))
+    s = Replace$(s, ChrW$(&H2019), "'")
+    MonthLabelFromCell = s
+End Function
+
+Private Function TcsTdsMonthSet(ws As Worksheet, lastRow As Long, ByVal currentLbl As String, ByVal priorLbl As String) As Object
+    Dim months As Object, labels() As String, i As Long, j As Long, tmp As String
+    Dim lbl As Variant
+    Set months = CreateObject("Scripting.Dictionary")
+    For i = 2 To lastRow
+        lbl = MonthLabelFromCell(ws.Cells(i, 1).Value)
+        If Len(lbl) > 0 Then
+            If Not months.Exists(lbl) Then months.Add lbl, 1
+        End If
+    Next i
+    If months.Count = 0 Then
+        months.Add currentLbl, 1
+        months.Add priorLbl, 1
+        Set TcsTdsMonthSet = months
+        Exit Function
+    End If
+    If months.Count <= 2 Then
+        Set TcsTdsMonthSet = months
+        Exit Function
+    End If
+    ReDim labels(0 To months.Count - 1)
+    i = 0
+    For Each lbl In months.Keys
+        labels(i) = CStr(lbl)
+        i = i + 1
+    Next lbl
+    For i = LBound(labels) To UBound(labels) - 1
+        For j = i + 1 To UBound(labels)
+            If MonthSortKey(labels(i)) > MonthSortKey(labels(j)) Then
+                tmp = labels(i)
+                labels(i) = labels(j)
+                labels(j) = tmp
+            End If
+        Next j
+    Next i
+    Set months = CreateObject("Scripting.Dictionary")
+    months.Add labels(UBound(labels) - 1), 1
+    months.Add labels(UBound(labels)), 1
+    Set TcsTdsMonthSet = months
 End Function
 
 Private Function Nz(ByVal v As Variant) As Double

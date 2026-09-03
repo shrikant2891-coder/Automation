@@ -275,6 +275,28 @@ def normalize_state(state) -> str | None:
     return s
 
 
+def tcs_tds_state(row: dict) -> str | None:
+    """Use tcs_state_code_to; fall back to state_code_to when TCS state is NA."""
+    return normalize_state(row.get("tcs_state_code_to")) or normalize_state(
+        row.get("state_code_to")
+    )
+
+
+def normalize_month_label(value) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.strftime("%b'%y")
+    text = str(value).strip().replace("\u2019", "'").replace("'", "'")
+    if not text:
+        return None
+    try:
+        year, month, _ = parse_month_label(text)
+        return datetime(year, month, 1).strftime("%b'%y")
+    except ValueError:
+        return text
+
+
 def parse_month_label(label: str) -> tuple[int, int, str]:
     text = str(label).strip().replace("'", "").replace("'", "")
     for fmt in ("%b%y", "%b%Y"):
@@ -287,13 +309,31 @@ def parse_month_label(label: str) -> tuple[int, int, str]:
 
 
 def prior_month_label(label: str) -> str:
-    year, month, _ = parse_month_label(label)
+    year, month, _ = parse_month_label(normalize_month_label(label) or label)
     if month == 1:
         year -= 1
         month = 12
     else:
         month -= 1
     return datetime(year, month, 1).strftime("%b'%y")
+
+
+def tcs_tds_month_labels(rows: list[dict], current_month: str) -> list[str]:
+    """Use the latest two month labels present in Summary for TCS/TDS vouchers."""
+    labels: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        lbl = normalize_month_label(row.get("Month"))
+        if lbl and lbl not in seen:
+            seen.add(lbl)
+            labels.append(lbl)
+    labels.sort(key=lambda m: parse_month_label(m)[:2])
+    if len(labels) >= 2:
+        return labels[-2:]
+    if labels:
+        return [labels[-1]]
+    current = normalize_month_label(current_month) or current_month
+    return [current, prior_month_label(current)]
 
 
 def month_end_date(label: str) -> datetime:
@@ -509,10 +549,11 @@ def filter_tcs_tds_rows(
     months: list[str],
     order_type: str,
 ) -> list[dict]:
-    month_set = {str(m).strip() for m in months}
+    month_set = {normalize_month_label(m) or str(m).strip() for m in months}
     out = []
     for row in rows:
-        if str(row.get("Month", "")).strip() not in month_set:
+        row_month = normalize_month_label(row.get("Month"))
+        if row_month not in month_set:
             continue
         if str(row.get("order_type", "")).strip() != order_type:
             continue
@@ -654,26 +695,25 @@ def gen_tcs_tds_voucher(
     mode = spec["tcs_tds"]
     cols = list(TCS_COLUMNS.keys()) if mode == "tcs" else [TDS_COLUMN]
 
-    # Net all Summary rows at state level (per TCS/TDS column) before posting.
-    agg: dict[tuple[str, str], float] = defaultdict(float)
+    # Net all Summary rows at state level (per GL) before posting.
+    agg: dict[tuple[str, int], float] = defaultdict(float)
     for row in rows:
-        state = normalize_state(row.get("tcs_state_code_to"))
+        state = tcs_tds_state(row)
         if not state:
             continue
         for col in cols:
             amount = to_amount(row.get(col))
             if amount is None or abs(amount) < 0.005:
                 continue
-            agg[(state, col)] += amount
+            gl = gl_for_column(gl_map, col, state)
+            if gl is None:
+                continue
+            agg[(state, gl)] += amount
 
     total_dr = 0.0
     total_cr = 0.0
-    for (state, col), amount in sorted(agg.items(), key=lambda x: (x[0][0], x[0][1])):
+    for (state, gl), amount in sorted(agg.items(), key=lambda x: (x[0][0], x[0][1])):
         if abs(amount) < 0.005:
-            continue
-        gl = gl_for_column(gl_map, col, state)
-        if gl is None:
-            builder.note_unmapped("GL", col, f"tcs_state={state}")
             continue
         dr, cr = tcs_tds_to_dr_cr(amount)
         builder.add(
@@ -861,7 +901,7 @@ def write_instructions(ws):
         ("", False),
         ("Posting rules", True),
         ("Expense & GST lines use state_code_to at state level.", False),
-        ("TCS / TDS lines use tcs_state_code_to, net at state level, and include current + prior month.", False),
+        ("TCS / TDS lines use tcs_state_code_to (fallback state_code_to), net at state level per GL, and include the latest two Summary months.", False),
         ("TCS/TDS: negative net -> debit receivable; positive net -> credit receivable.", False),
         ("IGST input: IN-DL -> 142067; other states -> 142013.", False),
         ("Debtor & provision ledgers always use IN-OTH.", False),
@@ -895,6 +935,7 @@ def build(input_path: Path, output_path: Path):
     month_label = detect_month(summary_rows, cfg["month"])
     book_date = month_end_date(month_label)
     prior_label = prior_month_label(month_label)
+    tcs_tds_months = tcs_tds_month_labels(summary_rows, month_label)
 
     builder = MPUploaderBuilder(
         company_code=cfg["company_code"],
@@ -903,7 +944,7 @@ def build(input_path: Path, output_path: Path):
         function=cfg["function"],
     )
 
-    print(f"Month: {month_label} | Prior OI month: {prior_label} | Date: {book_date.date()}")
+    print(f"Month: {month_label} | Prior OI month: {prior_label} | TCS/TDS months: {tcs_tds_months} | Date: {book_date.date()}")
     print(f"Summary rows: {len(summary_rows)} | GL mappings: {len(gl_map)}")
 
     for spec in DEFAULT_VOUCHERS:
@@ -911,13 +952,11 @@ def build(input_path: Path, output_path: Path):
         month = month_label if spec["month_scope"] == "current" else prior_label
 
         if spec.get("tcs_tds"):
-            scoped = filter_tcs_tds_rows(
-                summary_rows, [month_label, prior_label], spec["order_type"]
-            )
+            scoped = filter_tcs_tds_rows(summary_rows, tcs_tds_months, spec["order_type"])
             if not scoped:
                 print(
                     f"  skip voucher {vno} {spec['key']} — no Summary rows for "
-                    f"{month_label} / {prior_label}"
+                    f"{' / '.join(tcs_tds_months)}"
                 )
                 continue
             before = len(builder.rows)
