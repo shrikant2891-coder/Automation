@@ -174,7 +174,7 @@ DEFAULT_VOUCHERS = [
     {
         "voucher_no": 41,
         "key": "TCS_POSTPAID",
-        "month_scope": "current",
+        "month_scope": "both",
         "order_type": "postpaid",
         "reverse": False,
         "voucher_type": "AR-Journal",
@@ -186,7 +186,7 @@ DEFAULT_VOUCHERS = [
     {
         "voucher_no": 42,
         "key": "TDS_POSTPAID",
-        "month_scope": "current",
+        "month_scope": "both",
         "order_type": "postpaid",
         "reverse": False,
         "voucher_type": "AR-Journal",
@@ -198,7 +198,7 @@ DEFAULT_VOUCHERS = [
     {
         "voucher_no": 43,
         "key": "TCS_PREPAID",
-        "month_scope": "current",
+        "month_scope": "both",
         "order_type": "prepaid",
         "reverse": False,
         "voucher_type": "AR-Journal",
@@ -210,60 +210,12 @@ DEFAULT_VOUCHERS = [
     {
         "voucher_no": 44,
         "key": "TDS_PREPAID",
-        "month_scope": "current",
+        "month_scope": "both",
         "order_type": "prepaid",
         "reverse": False,
         "voucher_type": "AR-Journal",
         "debtor_scope": "prepaid",
         "narration": "TDS Receivable ( Prepaid) For the month of {month}",
-        "provision_reverse": "No",
-        "tcs_tds": "tds",
-    },
-    {
-        "voucher_no": 45,
-        "key": "TCS_POSTPAID_PRIOR",
-        "month_scope": "prior",
-        "order_type": "postpaid",
-        "reverse": True,
-        "voucher_type": "AR-Journal",
-        "debtor_scope": "postpaid",
-        "narration": "TCS GST Payable ( Postpaid) For the month of {month}",
-        "provision_reverse": "No",
-        "tcs_tds": "tcs",
-    },
-    {
-        "voucher_no": 46,
-        "key": "TDS_POSTPAID_PRIOR",
-        "month_scope": "prior",
-        "order_type": "postpaid",
-        "reverse": True,
-        "voucher_type": "AR-Journal",
-        "debtor_scope": "postpaid",
-        "narration": "TDS Payable ( Postpaid) For the month of {month}",
-        "provision_reverse": "No",
-        "tcs_tds": "tds",
-    },
-    {
-        "voucher_no": 47,
-        "key": "TCS_PREPAID_PRIOR",
-        "month_scope": "prior",
-        "order_type": "prepaid",
-        "reverse": True,
-        "voucher_type": "AR-Journal",
-        "debtor_scope": "prepaid",
-        "narration": "TCS GST Payable ( Prepaid) For the month of {month}",
-        "provision_reverse": "No",
-        "tcs_tds": "tcs",
-    },
-    {
-        "voucher_no": 48,
-        "key": "TDS_PREPAID_PRIOR",
-        "month_scope": "prior",
-        "order_type": "prepaid",
-        "reverse": True,
-        "voucher_type": "AR-Journal",
-        "debtor_scope": "prepaid",
-        "narration": "TDS Payable ( Prepaid) For the month of {month}",
         "provision_reverse": "No",
         "tcs_tds": "tds",
     },
@@ -363,13 +315,9 @@ def sign_to_dr_cr(amount: float, reverse: bool = False) -> tuple[float, float]:
     return dr, cr
 
 
-def tcs_tds_to_dr_cr(amount: float, is_prior_month: bool = False) -> tuple[float, float]:
-    """TCS/TDS after state-level netting.
-
-    Current month (receivable): negative net -> debit, positive net -> credit.
-    Prior month (payable): negative net -> credit, positive net -> debit.
-    """
-    return sign_to_dr_cr(amount, reverse=is_prior_month)
+def tcs_tds_to_dr_cr(amount: float) -> tuple[float, float]:
+    """After state-level netting: negative -> debit receivable, positive -> credit."""
+    return sign_to_dr_cr(amount, reverse=False)
 
 
 def is_expense_column(header: str, all_headers: set[str]) -> bool:
@@ -556,6 +504,22 @@ class MPUploaderBuilder:
         self.unmapped.append({"Type": kind, "Key": key, "Detail": detail})
 
 
+def filter_tcs_tds_rows(
+    rows: list[dict],
+    months: list[str],
+    order_type: str,
+) -> list[dict]:
+    month_set = {str(m).strip() for m in months}
+    out = []
+    for row in rows:
+        if str(row.get("Month", "")).strip() not in month_set:
+            continue
+        if str(row.get("order_type", "")).strip() != order_type:
+            continue
+        out.append(row)
+    return out
+
+
 def filter_rows(
     rows: list[dict],
     month: str,
@@ -689,7 +653,6 @@ def gen_tcs_tds_voucher(
     narration = spec["narration"].format(month=month_label)
     mode = spec["tcs_tds"]
     cols = list(TCS_COLUMNS.keys()) if mode == "tcs" else [TDS_COLUMN]
-    is_prior_month = spec.get("month_scope") == "prior"
 
     # Net all Summary rows at state level (per TCS/TDS column) before posting.
     agg: dict[tuple[str, str], float] = defaultdict(float)
@@ -712,7 +675,7 @@ def gen_tcs_tds_voucher(
         if gl is None:
             builder.note_unmapped("GL", col, f"tcs_state={state}")
             continue
-        dr, cr = tcs_tds_to_dr_cr(amount, is_prior_month=is_prior_month)
+        dr, cr = tcs_tds_to_dr_cr(amount)
         builder.add(
             voucher_no=voucher_no,
             account=gl,
@@ -894,13 +857,12 @@ def write_instructions(ws):
         ("32-33  OI opening reversal (prior month MEC OI) — Prepaid / Postpaid", False),
         ("34     Provision (order_type = Provision)", False),
         ("35-36  Volume discount (VD / PBO VD rows)", False),
-        ("41-44  TCS / TDS receivable (current month) by prepaid & postpaid", False),
-        ("45-48  TCS / TDS payable (prior month) by prepaid & postpaid", False),
+        ("41-44  TCS / TDS receivable by prepaid & postpaid (current + prior month)", False),
         ("", False),
         ("Posting rules", True),
         ("Expense & GST lines use state_code_to at state level.", False),
-        ("TCS / TDS lines use tcs_state_code_to and net at state level.", False),
-        ("TCS/TDS current month: negative net -> debit receivable; prior month: negative net -> credit payable.", False),
+        ("TCS / TDS lines use tcs_state_code_to, net at state level, and include current + prior month.", False),
+        ("TCS/TDS: negative net -> debit receivable; positive net -> credit receivable.", False),
         ("IGST input: IN-DL -> 142067; other states -> 142013.", False),
         ("Debtor & provision ledgers always use IN-OTH.", False),
         ("Negative Summary values -> Debit expense/GST, Credit debtor.", False),
@@ -949,9 +911,14 @@ def build(input_path: Path, output_path: Path):
         month = month_label if spec["month_scope"] == "current" else prior_label
 
         if spec.get("tcs_tds"):
-            scoped = filter_rows(summary_rows, month, spec["order_type"])
+            scoped = filter_tcs_tds_rows(
+                summary_rows, [month_label, prior_label], spec["order_type"]
+            )
             if not scoped:
-                print(f"  skip voucher {vno} {spec['key']} — no Summary rows for {month}")
+                print(
+                    f"  skip voucher {vno} {spec['key']} — no Summary rows for "
+                    f"{month_label} / {prior_label}"
+                )
                 continue
             before = len(builder.rows)
             gen_tcs_tds_voucher(
