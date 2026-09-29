@@ -1,0 +1,1241 @@
+<?xml version='1.0' encoding='utf-8'?>
+<payroll fy="2026-27" version="1" updated="2026-09-29T21:10:26Z">
+  <settings>
+    <setting name="pf_cap_legacy" value="1800" />
+    <setting name="pf_cap_new" value="3000" />
+    <setting name="pf_effective_month_index" value="6" />
+    <setting name="pf_effective_month_label" value="Sep'26" />
+    <setting name="output_folder" value="" />
+  </settings>
+  <months>
+    <month index="1" label="Apr'26" days="30" />
+    <month index="2" label="May'26" days="31" />
+    <month index="3" label="Jun'26" days="30" />
+    <month index="4" label="Jul'26" days="31" />
+    <month index="5" label="Aug'26" days="31" />
+    <month index="6" label="Sep'26" days="30" />
+    <month index="7" label="Oct'26" days="31" />
+    <month index="8" label="Nov'26" days="30" />
+    <month index="9" label="Dec'26" days="31" />
+    <month index="10" label="Jan'27" days="31" />
+    <month index="11" label="Feb'27" days="28" />
+    <month index="12" label="Mar'27" days="31" />
+  </months>
+  <employees>
+    <employee code="INF0001">
+      <salary basic="30000" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Arun Awasthi</name>
+        <father_name>xxx</father_name>
+        <email>xxx</email>
+        <gender>Male</gender>
+        <doj>2017-01-01</doj>
+        <uan>xxx</uan>
+        <bank_code>-</bank_code>
+        <bank_name>xxxx</bank_name>
+        <bank_account>xxx</bank_account>
+        <ifsc>xxx</ifsc>
+        <department>Dummy</department>
+        <designation>Manger</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0002">
+      <salary basic="30000" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Anjita</name>
+        <father_name>xxx</father_name>
+        <email>xxx</email>
+        <gender>Female</gender>
+        <doj>2017-01-01</doj>
+        <uan>xxx</uan>
+        <bank_code>-</bank_code>
+        <bank_name>xxxx</bank_name>
+        <bank_account>xxx</bank_account>
+        <ifsc>xxx</ifsc>
+        <department>Dummy</department>
+        <designation>Manger</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0003">
+      <salary basic="50000" />
+      <salary pf_status="No" />
+      <salary status="Inactive" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="5" label="Aug'26" days="0" />
+        <month index="6" label="Sep'26" days="0" />
+      </attendance>
+      <master>
+        <name>ABHAY KUMAR</name>
+        <father_name>SHIV JATAN PANDIT</father_name>
+        <email>info.developer007@gmail.com</email>
+        <dob>1998-04-08</dob>
+        <gender>Male</gender>
+        <doj>2018-09-10</doj>
+        <pan>ESMPK3078Q</pan>
+        <bank_code>-</bank_code>
+        <bank_name>ICICI BANK</bank_name>
+        <bank_account>037801521642</bank_account>
+        <ifsc>ICIC0000378</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0004">
+      <salary basic="32500" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Brajesh Kuarma Singh</name>
+        <father_name>Satendra Singh</father_name>
+        <email>web.brij@gmail.com</email>
+        <dob>1991-11-21</dob>
+        <gender>Male</gender>
+        <doj>2018-09-12</doj>
+        <uan>-</uan>
+        <pf_account>-</pf_account>
+        <pan>GRKPS2799H</pan>
+        <bank_code>-</bank_code>
+        <bank_name>ICICI Bank</bank_name>
+        <bank_account>037801521653</bank_account>
+        <ifsc>ICIC0000378</ifsc>
+        <department>IT</department>
+        <designation>IT Manager</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0005">
+      <salary basic="12000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Vikash Kumar</name>
+        <father_name>Sunil Singh</father_name>
+        <email>web.vkash98@gmail.com</email>
+        <dob>1995-12-15</dob>
+        <gender>Male</gender>
+        <doj>2019-01-26</doj>
+        <uan>-</uan>
+        <pf_account>-</pf_account>
+        <pan>FVWPK2977J</pan>
+        <bank_code>3211</bank_code>
+        <bank_name>State Bank of India</bank_name>
+        <bank_account>33967680753</bank_account>
+        <ifsc>SBIN0003211</ifsc>
+        <department>SEO</department>
+        <designation>SEO Exevutive</designation>
+      </master>
+    </employee>
+    <employee code="INF0006">
+      <salary basic="17500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Ankit Saini</name>
+        <father_name>Balkishan Saini</father_name>
+        <email>ronsaini0009@gmail.com</email>
+        <dob>1993-07-01</dob>
+        <gender>Male</gender>
+        <doj>2019-04-01</doj>
+        <pan>FBEPS8917Q</pan>
+        <bank_code>-</bank_code>
+        <bank_name>SBI</bank_name>
+        <bank_account>20109712008</bank_account>
+        <ifsc>SBIN0001620</ifsc>
+        <department>Graphic Design</department>
+        <designation>Senior Graphic Designer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0007">
+      <salary basic="6750" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="13" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Khokan Pradhan</name>
+        <father_name>Ghanashyam Pardhan</father_name>
+        <email>khokanpradhan22@gmail.com</email>
+        <dob>1983-10-21</dob>
+        <gender>Male</gender>
+        <doj>2020-12-01</doj>
+        <pan>BWOPP5674A</pan>
+        <bank_code>ICICI</bank_code>
+        <bank_name>Khokan Pradhan</bank_name>
+        <bank_account>037801521645</bank_account>
+        <ifsc>ICIC0000378</ifsc>
+        <department>Pantry</department>
+        <designation>Office Boy</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0008">
+      <salary basic="12000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Amit</name>
+        <father_name>Shankar Chandar</father_name>
+        <email>amit.chandar1223@gmail.com</email>
+        <dob>1999-11-18</dob>
+        <gender>Male</gender>
+        <doj>2022-11-07</doj>
+        <pan>CGUPA5210J</pan>
+        <bank_name>ICICI Bank</bank_name>
+        <bank_account>037801521644</bank_account>
+        <ifsc>icic0000378</ifsc>
+        <designation>Digital Marketing</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0009">
+      <salary basic="12500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Adarsh Prasad</name>
+        <father_name>Shri Krishn Prasad</father_name>
+        <email>adarshprasad7@gmail.com</email>
+        <dob>1997-03-22</dob>
+        <gender>Male</gender>
+        <doj>2022-11-19</doj>
+        <uan>xxx</uan>
+        <pf_account>NA</pf_account>
+        <pan>EFDPP6859G</pan>
+        <bank_code>-</bank_code>
+        <bank_name>Axis Bank</bank_name>
+        <bank_account>918010089314871</bank_account>
+        <ifsc>UTIB0001600</ifsc>
+        <department>Developer</department>
+        <designation>React Developer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0010">
+      <salary basic="17500" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Vikash Kumar Singh</name>
+        <father_name>Jay prakash singh</father_name>
+        <email>vik18nov@gmail.com</email>
+        <dob>1998-11-18</dob>
+        <gender>Male</gender>
+        <doj>2023-06-10</doj>
+        <pan>HULPS7841R</pan>
+        <bank_code>-</bank_code>
+        <bank_name>ICICI BANK</bank_name>
+        <bank_account>037801521657</bank_account>
+        <ifsc>ICIC0000378</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0011">
+      <salary basic="7500" />
+      <salary pf_status="No" />
+      <salary status="Inactive" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="7.5" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="5" label="Aug'26" days="0" />
+        <month index="6" label="Sep'26" days="0" />
+      </attendance>
+      <master>
+        <name>Arjun Kumar</name>
+        <father_name>Mansharam</father_name>
+        <email>search.arjunkumar@gmail.com</email>
+        <dob>2002-11-04</dob>
+        <gender>Male</gender>
+        <doj>2023-07-28</doj>
+        <pan>LADPK7923E</pan>
+        <bank_name>State Bank of India</bank_name>
+        <bank_account>43268697370</bank_account>
+        <ifsc>SBIN0017285</ifsc>
+        <department>Creative Department</department>
+        <designation>Graphic Designer</designation>
+      </master>
+    </employee>
+    <employee code="INF0012">
+      <salary basic="15000" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Naitik Shukla</name>
+        <father_name>Krishna Kumar Shukla</father_name>
+        <email>naitikshukla324@gmail.com</email>
+        <dob>2004-06-21</dob>
+        <gender>Male</gender>
+        <doj>2023-11-16</doj>
+        <pan>SNKPS9082P</pan>
+        <bank_name>State Bank of India</bank_name>
+        <bank_account>43747285476</bank_account>
+        <ifsc>SBIN0063189</ifsc>
+        <department>Marketing</department>
+        <designation>Manager</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0013">
+      <salary basic="5000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="28" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Naresh Rawat</name>
+        <father_name>Shyam Singh Rawat</father_name>
+        <email>nareshrawat15082022@gmail.com</email>
+        <dob>2003-03-25</dob>
+        <gender>Male</gender>
+        <doj>2024-01-04</doj>
+        <pan>HKWPR8039H</pan>
+        <bank_name>IndusInd Bank</bank_name>
+        <bank_account>189958512784</bank_account>
+        <ifsc>INDB0001503</ifsc>
+        <department>Web Designer</department>
+      </master>
+    </employee>
+    <employee code="INF0014">
+      <salary basic="7500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="30" />
+        <month index="3" label="Jun'26" days="25.5" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Santosh Kumar Upadhayay</name>
+        <father_name>Sachchida nand Upadhayay</father_name>
+        <email>santoshkuma57717@gmail.com</email>
+        <dob>2002-03-02</dob>
+        <gender>Male</gender>
+        <doj>2024-06-01</doj>
+        <pan>AMOPU1434E</pan>
+        <bank_name>State Bank of India</bank_name>
+        <bank_account>38478367599</bank_account>
+        <ifsc>SBIN0004577</ifsc>
+        <designation>Frontend Developer</designation>
+      </master>
+    </employee>
+    <employee code="INF0015">
+      <salary basic="8500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Aman Tiwari</name>
+        <father_name>Satya Prakash Tiwari</father_name>
+        <email>amanak9036@gmail.com</email>
+        <dob>2002-08-03</dob>
+        <gender>Male</gender>
+        <doj>2024-10-05</doj>
+        <pan>CHDPT3484M</pan>
+        <bank_code>-</bank_code>
+        <bank_name>Kotak Mahindra Bank</bank_name>
+        <bank_account>2546561687</bank_account>
+        <ifsc>KKBK0004601</ifsc>
+        <department>Creative</department>
+        <designation>Video Editor</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0016">
+      <salary basic="4000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Saumya Agrahari</name>
+        <father_name>Mr.Manoj Kumar Agrahari</father_name>
+        <email>saumyaagrahari101@gmail.com</email>
+        <dob>31.05.2003</dob>
+        <gender>Female</gender>
+        <doj>2025-07-14</doj>
+        <pan>ERSPA2448Q</pan>
+        <bank_name>SBI</bank_name>
+        <bank_account>40462508769</bank_account>
+        <ifsc>SBIN0007075</ifsc>
+        <department>Development</department>
+        <designation>Web Devloper</designation>
+      </master>
+    </employee>
+    <employee code="INF0017">
+      <salary basic="37500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>VORA ARVINDBHAI ARVINDBHAI</name>
+        <father_name>ARVINDBHAI (Vivek Kumar)</father_name>
+        <email>vivekvora8485@gmail.com</email>
+        <dob>1999-08-06</dob>
+        <gender>Male</gender>
+        <doj>2025-07-19</doj>
+        <pan>BJXPV3346P</pan>
+        <bank_name>HDFC Bank</bank_name>
+        <bank_account>50100692454810</bank_account>
+        <ifsc>HDFC0005894</ifsc>
+        <department>Technical</department>
+        <designation>frontend developer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0018">
+      <salary basic="17500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="27" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Chandan kumar mandal</name>
+        <father_name>Raj kumar mandal</father_name>
+        <email>chandanraj495@gmail.com</email>
+        <dob>1986-10-26</dob>
+        <gender>Male</gender>
+        <doj>2025-11-17</doj>
+        <uan>101629256677</uan>
+        <pf_account>DSSHD19579140000010105</pf_account>
+        <pan>CYFPM0322J</pan>
+        <bank_name>Punjab National Bank</bank_name>
+        <bank_account>6578000100072101</bank_account>
+        <ifsc>PUNB0657800</ifsc>
+        <department>Development</department>
+        <designation>Full Stack Developer</designation>
+      </master>
+    </employee>
+    <employee code="INF0019">
+      <salary basic="41666.5" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Rishabh Khanna</name>
+        <father_name>Manoj Khanna</father_name>
+        <email>rishabhk1011@outlook.com</email>
+        <dob>1998-11-10</dob>
+        <gender>Male</gender>
+        <doj>2025-12-29</doj>
+        <uan>101721828793</uan>
+        <pf_account>MHBAN00484750002393858</pf_account>
+        <bank_code>-</bank_code>
+        <bank_name>HDFC bank</bank_name>
+        <bank_account>50100436528920</bank_account>
+        <ifsc>HDFC0001881</ifsc>
+        <designation>DevOps engineer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0020">
+      <salary basic="54083" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>MANOJ KUMAR KASHYAP</name>
+        <father_name>Sonpal Kashyap</father_name>
+        <email>manoj.kashyap.official@gmail.com</email>
+        <dob>30/07/1994</dob>
+        <gender>Male</gender>
+        <doj>2026-01-05</doj>
+        <uan>101792684814</uan>
+        <pan>GMFPK3653C</pan>
+        <bank_name>HDFC Bank</bank_name>
+        <bank_account>50100745018400</bank_account>
+        <ifsc>HDFC0000711</ifsc>
+        <department>IT</department>
+        <designation>Frontend Developer</designation>
+      </master>
+    </employee>
+    <employee code="INF0021">
+      <salary basic="12500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Kaushal</name>
+        <father_name>Rakesh Kumar</father_name>
+        <email>Kaushalkumar704277@gmail.com</email>
+        <dob>17.10.2003</dob>
+        <gender>Male</gender>
+        <doj>2026-01-10</doj>
+        <uan>-</uan>
+        <pf_account>-</pf_account>
+        <pan>MMBPK6633E</pan>
+        <bank_code>-</bank_code>
+        <bank_name>Punjab National Bank</bank_name>
+        <bank_account>7989001700053027</bank_account>
+        <ifsc>PUNB0798900</ifsc>
+        <department>Social Media</department>
+        <designation>Social Media Manager</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0022">
+      <salary basic="54167" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Vinay Chauhan</name>
+        <father_name>Ashok</father_name>
+        <email>vc699180@gmail.com</email>
+        <dob>10/09/1997</dob>
+        <gender>Male</gender>
+        <doj>2026-01-19</doj>
+        <uan>101584990209</uan>
+        <pan>BTJPC5221Q</pan>
+        <bank_code>-</bank_code>
+        <bank_name>DBS Bank</bank_name>
+        <bank_account>8504010000009590</bank_account>
+        <ifsc>DBSS0IN0504</ifsc>
+        <department>IT</department>
+        <designation>React Developer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0023">
+      <salary basic="40000" />
+      <salary pf_status="No" />
+      <salary status="Inactive" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="5" label="Aug'26" days="0" />
+        <month index="6" label="Sep'26" days="0" />
+      </attendance>
+      <master>
+        <name>Harsh Saliya</name>
+        <father_name>Ashvinbhai</father_name>
+        <email>harshsaliya1998@gmail.com</email>
+        <dob>1998-11-10</dob>
+        <gender>Male</gender>
+        <doj>2026-01-25</doj>
+        <uan>xxx</uan>
+        <bank_code>-</bank_code>
+        <bank_name>HDFC Bank</bank_name>
+        <bank_account>50100785998159</bank_account>
+        <ifsc>HDFC0007946</ifsc>
+        <department>Design</department>
+        <designation>UI/UX Designer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0024">
+      <salary basic="56150" />
+      <salary pf_status="No" />
+      <salary status="Inactive" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="5" label="Aug'26" days="0" />
+        <month index="6" label="Sep'26" days="0" />
+      </attendance>
+      <master>
+        <name>Pankaj kumar</name>
+        <father_name>Ram bahadur</father_name>
+        <email>pankajpaul0007@gmailcom</email>
+        <dob>1995-08-01</dob>
+        <gender>Male</gender>
+        <doj>2026-03-17</doj>
+        <uan>101461380564</uan>
+        <pf_account>MRNOI18279380000025459</pf_account>
+        <bank_code>FDRL0001555</bank_code>
+        <bank_name>FEDERAL</bank_name>
+        <bank_account>15550100042065</bank_account>
+        <ifsc>FDRL0001555</ifsc>
+        <department>IT</department>
+        <designation>SEN.SOFTWARE DEVELOPER</designation>
+      </master>
+    </employee>
+    <employee code="INF0025">
+      <salary basic="7500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="29" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Antama</name>
+        <father_name>Rajender singh</father_name>
+        <email>tanwerantama@gmail.com</email>
+        <dob>2000-12-15</dob>
+        <gender>Female</gender>
+        <doj>2026-03-26</doj>
+        <pan>CCJPA7675L</pan>
+        <bank_name>SBI</bank_name>
+        <bank_account>37723081055</bank_account>
+        <ifsc>SBIN0051448</ifsc>
+        <department>Development</department>
+        <designation>Web Developer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0026">
+      <salary basic="35000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Dhruva Pathak</name>
+        <father_name>Late Vijay Pathak</father_name>
+        <email>dhruva.pathak@equipped.ai</email>
+        <dob>1978-10-09</dob>
+        <gender>Male</gender>
+        <uan>xxx</uan>
+        <pan>AMJPP4490Q</pan>
+        <bank_name>Kotak Mahindra Bank</bank_name>
+        <bank_account>01810030015156</bank_account>
+        <ifsc>KKBK0000181</ifsc>
+        <department>QA</department>
+        <designation>QA</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0027">
+      <salary basic="35000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="30" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Gulam Waris</name>
+        <father_name>Ali Zaheer Warsi</father_name>
+        <email>warisgulam50@gmail.com</email>
+        <dob>1992-07-01</dob>
+        <gender>Male</gender>
+        <doj>2025-12-15</doj>
+        <uan>101693665054</uan>
+        <pan>AGEPW9420E</pan>
+        <bank_name>Axis Bank</bank_name>
+        <bank_account>921010046063008</bank_account>
+        <ifsc>UTIB0003557</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0029">
+      <salary basic="19500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="23" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Shankar Kumar Das</name>
+        <father_name>Ram Lakhan Das</father_name>
+        <email>shankarkr.23@gmail.com</email>
+        <dob>1990-05-23</dob>
+        <gender>Male</gender>
+        <doj>2021-03-02</doj>
+        <pan>BLEPD0688R</pan>
+        <bank_name>ICICI Bank</bank_name>
+        <bank_account>037801521656</bank_account>
+        <ifsc>ICIC0000378</ifsc>
+        <designation>Front end developer (UI Developer)</designation>
+      </master>
+    </employee>
+    <employee code="INF0028">
+      <salary basic="57037.5" />
+      <salary pf_status="No" />
+      <salary status="Inactive" />
+      <attendance>
+        <month index="1" label="Apr'26" days="30" />
+        <month index="2" label="May'26" days="31" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="5" label="Aug'26" days="0" />
+        <month index="6" label="Sep'26" days="0" />
+      </attendance>
+      <master>
+        <name>Ashutosh Kumar Pandey</name>
+        <father_name>Rajeshwar Nath Pandey</father_name>
+        <dob>1993-10-06</dob>
+        <gender>Male</gender>
+        <doj>2026-03-11</doj>
+        <pan>CVWPP6495D</pan>
+        <bank_name>HDFC Bank</bank_name>
+        <bank_account>50100352617084</bank_account>
+        <ifsc>HDFC0000394</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0030">
+      <salary basic="25000" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="7" />
+        <month index="3" label="Jun'26" days="30" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Hari Shankar Mishra</name>
+        <father_name>Raghvendra Mishra</father_name>
+        <email>harrymishra65@gmail.com</email>
+        <dob>1997-03-21</dob>
+        <gender>Mail</gender>
+        <doj>2026-05-25</doj>
+        <pan>DFNPM3198L</pan>
+        <bank_name>Axis Bank</bank_name>
+        <bank_account>921010019880957</bank_account>
+        <ifsc>UTIB0004486</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0031">
+      <salary basic="7500" />
+      <salary pf_status="No" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="9" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="29.5" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>SUDHANSHU KUMAR RATURI</name>
+      </master>
+    </employee>
+    <employee code="INF0032">
+      <salary basic="50000" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="28" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Shivam Vashishtha</name>
+        <father_name>Naresh Kumar Sharma</father_name>
+        <email>svashishtha1999@gmail.com</email>
+        <dob>1999-01-21</dob>
+        <gender>Male</gender>
+        <doj>2026-06-03</doj>
+        <uan>101492404025</uan>
+        <pan>BGVPV3625C</pan>
+        <bank_name>Kotak Mahindra Bank</bank_name>
+        <bank_account>2849302628</bank_account>
+        <ifsc>KKBK0000176</ifsc>
+        <department>Development</department>
+        <designation>Senior Backend Developer</designation>
+      </master>
+    </employee>
+    <employee code="INF0033">
+      <salary basic="91666.66666666667" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Shivam singh</name>
+        <father_name>Rajesh Kumar Singh</father_name>
+        <email>shivamsingh.singh7007@gmail.com</email>
+        <dob>1998-05-13</dob>
+        <gender>Male</gender>
+        <doj>2026-07-09</doj>
+        <uan>101511984939</uan>
+        <pan>MGXPS7331H</pan>
+        <bank_name>HDFC</bank_name>
+        <bank_account>50100317765356</bank_account>
+        <ifsc>HDFC0004716</ifsc>
+      </master>
+    </employee>
+    <employee code="INF0034">
+      <salary basic="70833.33333333333" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="2" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Vivek Kaul</name>
+        <father_name>Prediman Krishen Kaul</father_name>
+        <email>Vivekkaul143@gmail.com</email>
+        <dob>28.01.1989</dob>
+        <gender>MALE</gender>
+        <doj>29.06.2026</doj>
+        <uan>101310710438</uan>
+        <pan>AZGPK3437L</pan>
+        <bank_name>HDFC</bank_name>
+        <bank_account>50100287248072</bank_account>
+        <ifsc>HDFC0001897</ifsc>
+        <department>AI</department>
+        <designation>AI engineer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0035">
+      <salary basic="70833.33333333333" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="9" />
+        <month index="4" label="Jul'26" days="31" />
+        <month index="5" label="Aug'26" days="31" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Himanshu Singh</name>
+        <father_name>Muniveer Singh</father_name>
+        <email>Himanshusingh110591@gmail.com</email>
+        <dob>1991-05-11</dob>
+        <gender>Male</gender>
+        <doj>2026-06-22</doj>
+        <uan>101616785909</uan>
+        <pan>FPVPS6920G</pan>
+        <bank_name>HSBC</bank_name>
+        <bank_account>006 544837 006</bank_account>
+        <ifsc>HSBC0400002</ifsc>
+        <department>AI</department>
+        <designation>AI Engineer</designation>
+      </master>
+    </employee>
+    <employee code="INF0036">
+      <salary basic="47916.66666666666" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="4" label="Jul'26" days="19" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Gaurav Nagar</name>
+        <father_name>Tejpal Singh</father_name>
+        <email>gauravnagar033@gmail.com</email>
+        <dob>1995-04-02</dob>
+        <gender>Male</gender>
+        <doj>2026-07-13</doj>
+        <uan>101812108547</uan>
+        <pf_account>MRNOI00487130000017472</pf_account>
+        <pan>BOPPN2345H</pan>
+        <bank_code>-</bank_code>
+        <bank_name>ICICI BANK</bank_name>
+        <bank_account>414501508873</bank_account>
+        <ifsc>ICIC0004145</ifsc>
+        <department>NA</department>
+        <designation>NA</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+    <employee code="INF0037">
+      <salary basic="45833" />
+      <salary pf_status="Yes" />
+      <salary status="Active" />
+      <attendance>
+        <month index="1" label="Apr'26" days="0" />
+        <month index="2" label="May'26" days="0" />
+        <month index="3" label="Jun'26" days="0" />
+        <month index="4" label="Jul'26" days="0" />
+        <month index="6" label="Sep'26" days="30" />
+        <month index="7" label="Oct'26" days="31" />
+        <month index="8" label="Nov'26" days="30" />
+        <month index="9" label="Dec'26" days="31" />
+        <month index="10" label="Jan'27" days="31" />
+        <month index="11" label="Feb'27" days="28" />
+        <month index="12" label="Mar'27" days="31" />
+      </attendance>
+      <master>
+        <name>Amit Kishor</name>
+        <gender>Male</gender>
+        <doj>2026-08-03</doj>
+        <bank_code>-</bank_code>
+        <bank_name>Kotak Mahindra Bank</bank_name>
+        <bank_account>0612847376</bank_account>
+        <ifsc>KKBK0000282</ifsc>
+        <department>Developer</department>
+        <designation>Node Developer</designation>
+        <group>NA</group>
+      </master>
+    </employee>
+  </employees>
+  <increments>
+    <increment emp_code="INF0022" effective_month="Jul'26" new_basic="50001" old_basic="24999" arrear_months="3" notes="Imported from legacy increment layout" />
+    <increment emp_code="INF0006" effective_month="Jul'26" new_basic="7500" old_basic="3750" arrear_months="3" notes="Imported from legacy increment layout" />
+    <increment emp_code="INF0007" effective_month="Jul'26" new_basic="1500" old_basic="750" arrear_months="3" notes="Imported from legacy increment layout" />
+    <increment emp_code="INF0012" effective_month="Jul'26" new_basic="7500" old_basic="3750" arrear_months="3" notes="Imported from legacy increment layout" />
+    <increment emp_code="INF0029" effective_month="Jul'26" new_basic="6000" old_basic="" arrear_months="3" notes="Imported from legacy increment layout" />
+    <increment emp_code="INF0030" effective_month="Jul'26" new_basic="7500" old_basic="3750" arrear_months="3" notes="Imported from legacy increment layout" />
+  </increments>
+</payroll>

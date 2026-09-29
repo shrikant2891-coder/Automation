@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Infutive Payroll Dashboard (XML)</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Infutive Payroll Dashboard</h1>
+        <div class="meta" id="meta-line">Loading…</div>
+      </div>
+      <nav id="nav"></nav>
+    </header>
+    <main>
+      <section class="command-bar">
+        <input
+          id="command-input"
+          type="text"
+          placeholder='Command e.g. set setting pf_cap_new 3000'
+          autocomplete="off"
+        />
+        <button type="button" id="command-run">Apply command</button>
+        <button type="button" id="refresh-btn" title="Reload from payroll.xml">Refresh</button>
+      </section>
+      <div class="command-result" id="command-result"></div>
+
+      <section class="panel active" data-panel="generator">
+        <h2>Generator (Payslip)</h2>
+        <p class="muted">
+          Same flow as Excel Generator: pick employee and month, preview slip. Zero attendance → skip PDF (shown as skip).
+        </p>
+        <div class="grid-2">
+          <div>
+            <label>Employee</label>
+            <select id="gen-emp"></select>
+            <br /><br />
+            <label>Month</label>
+            <select id="gen-month"></select>
+            <br /><br />
+            <button type="button" id="gen-preview">Preview slip</button>
+          </div>
+          <div class="slip-card" id="slip-preview">
+            <p class="muted">Select employee and month, then Preview slip.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="settings">
+        <h2>Payroll Settings</h2>
+        <table id="settings-table"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody></tbody></table>
+      </section>
+
+      <section class="panel" data-panel="salary">
+        <h2>Salary Sheet (computed)</h2>
+        <table id="salary-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              <th>PF</th>
+              <th>Basic</th>
+              <th>Gross (≤ Aug)</th>
+              <th>Gross (Sep+)</th>
+              <th>PF ≤ Aug</th>
+              <th>PF Sep+</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="panel" data-panel="master">
+        <h2>Master Data</h2>
+        <select id="master-emp"></select>
+        <pre id="master-detail" class="slip-card" style="margin-top:0.75rem;overflow:auto"></pre>
+      </section>
+
+      <section class="panel" data-panel="attendance">
+        <h2>Attendance</h2>
+        <select id="att-emp"></select>
+        <table id="att-table" style="margin-top:0.75rem">
+          <thead><tr><th>Month</th><th>Days</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="panel" data-panel="increments">
+        <h2>Incremental Sheet</h2>
+        <table id="inc-table">
+          <thead>
+            <tr>
+              <th>Emp</th>
+              <th>Effective</th>
+              <th>New Basic</th>
+              <th>Old Basic</th>
+              <th>Arrear months</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="panel" data-panel="tax">
+        <h2>Income Tax (preview)</h2>
+        <p class="muted">Annual tax estimate from projected FY salary (same engine as dashboard slip).</p>
+        <select id="tax-emp"></select>
+        <div id="tax-detail" class="slip-card" style="margin-top:0.75rem"></div>
+      </section>
+
+      <section class="panel" data-panel="xml">
+        <h2>payroll.xml (source of truth)</h2>
+        <p class="muted">Commands update this file; dashboard reloads after each command.</p>
+        <pre id="xml-raw" class="slip-card" style="max-height:480px;overflow:auto;font-size:0.75rem"></pre>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
