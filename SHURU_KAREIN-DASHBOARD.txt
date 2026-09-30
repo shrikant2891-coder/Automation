@@ -1,0 +1,49 @@
+INFUTIVE PAYROLL - WEB DASHBOARD (Windows - SIMPLE)
+
+========================================
+STEP 1 - Download project ZIP
+========================================
+https://github.com/shrikant2891-coder/Automation/archive/refs/heads/cursor/payroll-pf-sep26-05bf.zip
+
+Extract ZIP. Open this folder inside:
+  Automation-cursor-payroll-pf-sep26-05bf
+
+You must see:
+  - start-dashboard.bat
+  - payroll_dashboard  (folder)
+  - payroll-dashboard  (folder)
+  - requirements-dashboard.txt
+
+========================================
+STEP 2 - Double-click
+========================================
+Double-click:  start-dashboard.bat
+
+- Black window will open - DO NOT CLOSE IT
+- Browser should open: http://localhost:8080
+
+========================================
+If browser does not open
+========================================
+Manually open Chrome/Edge and type in address bar:
+
+  localhost:8080
+
+(not google search - type in top address bar)
+
+========================================
+If still error in black window
+========================================
+1) Python install again from python.org
+   IMPORTANT: tick "Add python.exe to PATH"
+
+2) Right-click start-dashboard.bat -> Run as administrator (once)
+
+3) Send screenshot of the black window error to your IT / developer
+
+========================================
+Excel file only (no web) - direct download
+========================================
+https://github.com/shrikant2891-coder/Automation/raw/cursor/payroll-pf-sep26-05bf/Automatic_Salary_Slip_PF_IT_Fixed.xlsm
+
+Open in Microsoft Excel. Enable macros.
