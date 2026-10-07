@@ -16,6 +16,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 WORKBOOKS = [
     {
+        "path": "WEBKEY_SOLUTIONS_FS_FY2025-26_Comparable.xlsx",
+        "sheet": "Balance Sheet",
+        "liab_row": 24,
+        "asset_row": 34,
+        "col": 4,
+    },
+    {
         "path": "Gupta_Agency_Financial_Statements_FY2025-26.xlsx",
         "sheet": "Balance Sheet",
         "liab_row": 18,
