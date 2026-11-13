@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/app.css') }}">
+</head>
+<body class="nocaps">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+  <div class="flash {{ cat }}" style="max-width:340px;margin:12px auto 0">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+<form class="login" method="post">
+  <input type="hidden" name="_c" value="{{ csrf_token() }}">
+  <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="">
+  <h1 style="margin-top:12px">Employee Login</h1>
+  <label>Employee ID
+    <input name="u" required autofocus autocomplete="username" placeholder="E001">
+  </label>
+  <label>Password
+    <input name="p" type="password" required autocomplete="current-password">
+  </label>
+  <button type="submit">Login</button>
+  <p style="text-align:center;margin:14px 0 0">
+    <a href="{{ url_for('index') }}">Admin Login</a>
+  </p>
+</form>
+</body>
+</html>

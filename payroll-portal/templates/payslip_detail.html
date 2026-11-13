@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payslip {{ slip.month_year }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/app.css') }}">
+</head>
+<body class="f-modern nocaps">
+<header class="top">
+  <div class="brand">
+    <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="">
+  </div>
+  <div class="who" style="margin-left:auto">
+    <a class="wb" href="{{ url_for('employee_home') }}">← Back</a>
+  </div>
+</header>
+<main>
+  <h1>Payslip — {{ slip.month_year }}</h1>
+  <div class="card comp f130">
+    <div class="cob"><b>{{ slip.name }}</b> {{ slip.emp_code }} · {{ slip.department }}</div>
+    <table class="g">
+      <tr><th>Earnings</th><th class="r">Amount (₹)</th><th>Deductions</th><th class="r">Amount (₹)</th></tr>
+      <tr>
+        <td>Basic</td><td class="r">{{ '{:,.2f}'.format(slip.basic) }}</td>
+        <td>PF (Employee)</td><td class="r">{{ '{:,.2f}'.format(slip.pf_employee) }}</td>
+      </tr>
+      <tr>
+        <td>HRA</td><td class="r">{{ '{:,.2f}'.format(slip.hra) }}</td>
+        <td>TDS</td><td class="r">{{ '{:,.2f}'.format(slip.tds) }}</td>
+      </tr>
+      <tr>
+        <td>Special Allowance</td><td class="r">{{ '{:,.2f}'.format(slip.special_allowance) }}</td>
+        <td>Other</td><td class="r">{{ '{:,.2f}'.format(slip.other_deductions) }}</td>
+      </tr>
+      <tr class="b">
+        <td>Gross</td><td class="r">{{ '{:,.2f}'.format(slip.gross) }}</td>
+        <td>Total deductions</td><td class="r">{{ '{:,.2f}'.format(slip.pf_employee + slip.tds + slip.other_deductions) }}</td>
+      </tr>
+    </table>
+    <h3>Net pay: ₹{{ '{:,.2f}'.format(slip.net_pay) }}</h3>
+  </div>
+</main>
+</body>
+</html>

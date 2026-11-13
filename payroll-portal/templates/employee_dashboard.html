@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Payroll</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/app.css') }}">
+</head>
+<body class="f-modern nocaps">
+<header class="top">
+  <div class="brand">
+    <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="">
+    <span>Employee Portal</span>
+  </div>
+  <div class="who" style="margin-left:auto">
+    <span class="who-n">{{ employee.name }}</span>
+    <a class="wb lo" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+</header>
+<main class="ep">
+  <aside class="eside">
+    <div class="eav">
+      <span>{{ employee.name[:1] }}</span>
+    </div>
+    <h2>{{ employee.name }}</h2>
+    <p class="mut">{{ employee.emp_code }}</p>
+    <p class="mut">{{ employee.designation }}</p>
+    <nav class="etabs">
+      <a class="on" href="#">Payslips</a>
+      <a href="#">Profile</a>
+    </nav>
+  </aside>
+  <div class="emain">
+    <section class="ehero">
+      <div>
+        <div class="eyebrow">LATEST NET PAY</div>
+        <b>₹{{ '{:,.2f}'.format(latest_net) }}</b>
+      </div>
+      {% if slips %}
+      <a class="btn" href="{{ url_for('employee_payslip', slip_id=slips[0].id) }}">View latest slip</a>
+      {% endif %}
+    </section>
+    <h2>Salary history</h2>
+    <div class="scg">
+      {% for s in slips %}
+      <article class="sc">
+        <div class="sct"><b>{{ s.month_year }}</b><span>Payslip</span></div>
+        <div class="scn">₹{{ '{:,.2f}'.format(s.net_pay) }}<small>Net pay</small></div>
+        <div class="scs"><span>Gross <b>₹{{ '{:,.0f}'.format(s.gross) }}</b></span><span>PF <b>₹{{ '{:,.0f}'.format(s.pf_employee) }}</b></span></div>
+        <div class="sca">
+          <a class="btn alt" href="{{ url_for('employee_payslip', slip_id=s.id) }}">Open</a>
+        </div>
+      </article>
+      {% else %}
+      <p class="mut">No payslips published yet. Check back after payroll is processed.</p>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+</body>
+</html>

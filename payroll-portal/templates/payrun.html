@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block body %}
+<main>
+  <h1>Pay Run</h1>
+  <div class="panels">
+    <div class="card">
+      <h2>Start monthly pay run</h2>
+      <p class="mut">Computes gross pay, employee PF (12% of basic), estimated TDS, and net pay for every active employee.</p>
+      <form method="post" class="form" style="max-width:320px">
+        <input type="hidden" name="_c" value="{{ csrf_token() }}">
+        <label>Pay month
+          <input type="month" name="month_year" required value="{{ default_month }}">
+        </label>
+        <div class="row">
+          <button type="submit">Finalize pay run</button>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Recent runs</h2>
+      <ul class="fix">
+        {% for r in runs %}
+        <li><a href="{{ url_for('payslips', month=r.month_year) }}">{{ r.month_year }}</a> — {{ r.status }}</li>
+        {% else %}
+        <li class="mut">No pay runs yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</main>
+{% endblock %}

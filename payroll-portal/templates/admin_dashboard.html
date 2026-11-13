@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block body %}
+<main>
+  <h1>Payroll Dashboard</h1>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">CURRENT CYCLE</div>
+      <h2>{{ last_run.month_year if last_run else 'No pay run yet' }}</h2>
+      <small class="on-dark">Run pay from the Pay Run screen when the month is ready.</small>
+    </div>
+    <div class="hero-net">
+      <small>Last run net payout</small>
+      <b>₹{{ '{:,.2f}'.format(total_net) }}</b>
+    </div>
+    <div class="row">
+      <a class="btn" href="{{ url_for('payrun') }}">New pay run</a>
+      <a class="btn alt" href="{{ url_for('payslips') }}">View payslips</a>
+    </div>
+  </section>
+
+  <ol class="steps">
+    <li class="{% if emp_count %}done{% endif %}">
+      <i>1</i>
+      <div><b>Employees</b><span>{{ emp_count }} active</span></div>
+    </li>
+    <li class="{% if last_run %}done{% endif %}">
+      <i>2</i>
+      <div><b>Pay run</b><span>{% if last_run %}Finalized{% else %}Pending{% endif %}</span></div>
+    </li>
+    <li class="{% if last_run %}done{% endif %}">
+      <i>3</i>
+      <div><b>Payslips</b><span>Generated</span></div>
+    </li>
+    <li>
+      <i>4</i>
+      <div><b>Disburse</b><span>Export / bank file</span></div>
+    </li>
+  </ol>
+
+  <div class="kpis">
+    <div class="kpi">
+      <span>Active employees</span>
+      <b>{{ emp_count }}</b>
+      <small>On payroll</small>
+    </div>
+    <div class="kpi">
+      <span>Last month</span>
+      <b>{{ last_run.month_year if last_run else '—' }}</b>
+      <small>Pay period</small>
+    </div>
+    <div class="kpi">
+      <span>Net disbursed</span>
+      <b>₹{{ '{:,.0f}'.format(total_net) }}</b>
+      <small class="up">Last run</small>
+    </div>
+    <div class="kpi">
+      <span>Status</span>
+      <b>{% if last_run %}{{ last_run.status|title }}{% else %}Setup{% endif %}</b>
+      <small>Payroll state</small>
+    </div>
+  </div>
+
+  <label class="picker">
+    <span class="mut">Net payout by month</span>
+    <div class="chart" style="margin-top:10px">
+      {% for row in chart_data %}
+      <a class="bar {% if loop.first %}sel{% endif %}" href="{{ url_for('payslips', month=row.month_year) }}"
+         data-tip="{{ row.month_year }}: ₹{{ '{:,.0f}'.format(row.total) }} ({{ row.slips }} slips)">
+        <span class="v">₹{{ '{:,.0f}'.format(row.total) }}</span>
+        {% set max_t = chart_data|map(attribute='total')|max if chart_data else 1 %}
+        <i style="height:{{ [36, (row.total / (max_t or 1)) * 130]|max|int }}px"></i>
+        <em>{{ row.month_year[-2:] }}/{{ row.month_year[:4][2:] }}</em>
+      </a>
+      {% else %}
+      <p class="mut">Run your first pay cycle to see the chart.</p>
+      {% endfor %}
+    </div>
+  </label>
+</main>
+{% endblock %}
