@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block body %}
+<main>
+  <h1>Payslips</h1>
+  <form class="row picker" method="get" action="{{ url_for('payslips') }}">
+    <label>Pay month
+      <select name="month" onchange="this.form.submit()">
+        <option value="">Select month</option>
+        {% for r in runs %}
+        <option value="{{ r.month_year }}" {% if r.month_year == month %}selected{% endif %}>{{ r.month_year }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </form>
+  {% if selected %}
+  <p class="mut">Showing {{ slips|length }} slips for {{ selected.month_year }}.</p>
+  <div class="wrap">
+    <table class="t">
+      <thead>
+        <tr>
+          <th>Emp ID</th>
+          <th>Name</th>
+          <th>Dept</th>
+          <th class="n">Gross</th>
+          <th class="n">PF</th>
+          <th class="n">TDS</th>
+          <th class="n">Net pay</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in slips %}
+        <tr>
+          <td>{{ s.emp_code }}</td>
+          <td>{{ s.name }}</td>
+          <td>{{ s.department }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(s.gross) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(s.pf_employee) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(s.tds) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(s.net_pay) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total</td>
+          <td class="n">₹{{ '{:,.2f}'.format(slips|sum(attribute='gross')) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(slips|sum(attribute='pf_employee')) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(slips|sum(attribute='tds')) }}</td>
+          <td class="n">₹{{ '{:,.2f}'.format(slips|sum(attribute='net_pay')) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  {% else %}
+  <div class="flash warn">Create a pay run to generate payslips.</div>
+  {% endif %}
+</main>
+{% endblock %}
